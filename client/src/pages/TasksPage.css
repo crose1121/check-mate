@@ -1,0 +1,282 @@
+.tasks-container {
+  padding: 3rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #1a1a1a;
+  min-height: 100vh;
+}
+
+.tasks-container h2 {
+  margin-bottom: 2.5rem;
+  color: #e0e0e0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  position: relative;
+  padding-bottom: 1rem;
+  text-align: center;
+}
+
+.tasks-container h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+  transform: translateX(-50%);
+}
+
+.tasks-hint {
+  color: #999;
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-top: -1.5rem;
+  margin-bottom: 2rem;
+}
+
+.tasks-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-height: calc(5 * 200px + 4 * 1.5rem);
+  overflow-y: auto;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.tasks-grid-layout::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tasks-grid-layout::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tasks-grid-layout::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.tasks-grid-layout::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+.tasks-container p {
+  text-align: center;
+  color: #999;
+  font-size: 1.1rem;
+  margin-top: 3rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .tasks-grid-layout {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .tasks-grid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Completed Tasks Grid */
+.tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Task Card Styling */
+.task-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  transition: all 0.3s ease;
+  border-left: 4px solid #667eea;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.task-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border-left-color: #764ba2;
+}
+
+.task-card.completed {
+  opacity: 0.75;
+  background: #f5f5f5;
+}
+
+.task-card h3 {
+  margin: 0 0 0.8rem 0;
+  color: #2c3e50;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.4;
+  word-break: break-word;
+  padding-right: 2rem;
+}
+
+.task-card p {
+  margin: 0 0 1rem 0;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  flex-grow: 1;
+  word-break: break-word;
+}
+
+.task-card small {
+  color: #999;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Complete Button */
+.complete-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: transparent;
+  color: #ccc;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.complete-btn:hover {
+  color: #4caf50;
+  border-color: #4caf50;
+  transform: scale(1.15);
+}
+
+.task-card.completed .complete-btn {
+  color: #4caf50;
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.complete-btn:active {
+  animation: checkmarkPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Delete Button */
+.task-delete-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: transparent;
+  color: #ccc;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.task-delete-btn:hover {
+  color: #f44336;
+  border-color: #f44336;
+  transform: scale(1.15);
+  background: rgba(244, 67, 54, 0.05);
+}
+
+.task-delete-btn:active {
+  animation: deletePop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes deletePop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4) rotate(15deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animation on completing task (success - green) */
+.task-card.completing-success {
+  animation: taskCompletingSuccess 0.6s ease-out forwards;
+}
+
+@keyframes taskCompletingSuccess {
+  0% {
+    border-left-color: #667eea;
+    background: white;
+  }
+  50% {
+    box-shadow: 0 8px 24px rgba(76, 175, 80, 0.3);
+  }
+  100% {
+    border-left-color: #4caf50;
+    background: #f0f8f0;
+  }
+}
+
+/* Animation on uncompleting task (fail - red) */
+.task-card.completing-fail {
+  animation: taskCompletingFail 0.6s ease-out forwards;
+}
+
+@keyframes taskCompletingFail {
+  0% {
+    border-left-color: #4caf50;
+    background: #f5f5f5;
+  }
+  50% {
+    box-shadow: 0 8px 24px rgba(244, 67, 54, 0.3);
+  }
+  100% {
+    border-left-color: #f44336;
+    background: white;
+  }
+}
+
+.completed-text {
+  color: #4caf50;
+  font-weight: 600;
+}

@@ -1,0 +1,272 @@
+.note-grid-item {
+  background: white;
+  border-radius: 8px;
+  padding: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: visible;
+  border-left: 4px solid #667eea;
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  user-select: none;
+}
+
+.note-grid-item[draggable="true"] {
+  cursor: grab;
+}
+
+.note-grid-item[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.note-grid-item.dragging {
+  opacity: 0.5;
+  transform: scale(0.95) rotate(1deg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.note-grid-item.dragging .note-grid-checkmark,
+.note-grid-item.dragging .note-grid-delete {
+  pointer-events: none;
+}
+
+.note-grid-item.drag-over {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  border-left-color: #764ba2;
+}
+
+.note-grid-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  border-left-color: #764ba2;
+}
+
+.note-grid-item.completed {
+  opacity: 0.65;
+  background: #f9f9f9;
+}
+
+.note-grid-item.priority-on {
+  border-left-width: 6px;
+}
+
+.note-grid-priority {
+  position: absolute;
+  bottom: 0.6rem;
+  left: 0.6rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0c0c0c;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.priority-1 {
+  background: #ff6b6b;
+}
+
+.priority-2 {
+  background: #ffa24c;
+}
+
+.priority-3 {
+  background: #7bdff2;
+}
+
+.priority-4 {
+  background: #6aa6ff;
+}
+
+.priority-5 {
+  background: #9b8cff;
+}
+
+.priority-6 {
+  background: #b7c4ff;
+}
+
+.note-grid-drag-handle {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.8rem;
+  color: #ddd;
+  font-size: 1rem;
+  letter-spacing: -4px;
+  user-select: none;
+  pointer-events: none;
+}
+
+.note-grid-checkmark {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.8rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: transparent;
+  color: #ccc;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  padding: 0;
+  font-weight: bold;
+}
+
+.note-grid-checkmark:hover {
+  color: #4caf50;
+  border-color: #4caf50;
+  transform: scale(1.1);
+}
+
+.note-grid-checkmark:active {
+  animation: checkmarkPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.note-grid-item.completed .note-grid-checkmark {
+  color: #4caf50;
+  border-color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+  animation: successPulse 0.6s ease-out;
+}
+
+.note-grid-delete {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.8rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  background: transparent;
+  color: #ccc;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  padding: 0;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.note-grid-delete:hover {
+  color: #f44336;
+  border-color: #f44336;
+  transform: scale(1.1);
+  background: rgba(244, 67, 54, 0.05);
+}
+
+.note-grid-delete:active {
+  animation: deletePop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes deletePop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4) rotate(15deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(0.8);
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(76, 175, 80, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+  }
+}
+
+.note-grid-item h4 {
+  margin: 0 0 0.6rem 0;
+  color: #2c3e50;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.3;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.note-grid-item p {
+  margin: 0 0 0.8rem 0;
+  color: #777;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  flex-grow: 1;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.note-grid-item small {
+  color: #aaa;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.drop-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.4rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

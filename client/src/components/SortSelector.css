@@ -1,0 +1,83 @@
+.sort-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.sort-selector-toggle {
+  border: 1px solid #3b3b3b;
+  background: #111;
+  color: #d6d6d6;
+  padding: 0.65rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.sort-selector-toggle:hover {
+  border-color: #667eea;
+  color: #fff;
+}
+
+.sort-selector-arrow {
+  transition: transform 0.2s ease;
+}
+
+.sort-selector-arrow.open {
+  transform: rotate(180deg);
+}
+
+.sort-selector-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid #3b3b3b;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  min-width: 160px;
+  overflow: hidden;
+}
+
+.sort-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  color: #d6d6d6;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sort-option:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: #fff;
+}
+
+.sort-option.active {
+  background: rgba(102, 126, 234, 0.15);
+  color: #667eea;
+}
+
+.sort-option:not(:last-child) {
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.checkmark {
+  color: #667eea;
+  font-weight: 700;
+  margin-left: auto;
+}

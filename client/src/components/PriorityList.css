@@ -1,0 +1,71 @@
+.priority-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 40%;
+  margin: 0 auto;
+}
+
+.priority-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 1.25rem;
+  align-items: stretch;
+  width: 100%;
+}
+
+.priority-rank {
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 0.75rem 0.5rem;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  height: 200px;
+}
+
+.priority-rank.top {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #0c0c0c;
+  border-color: transparent;
+}
+
+.priority-number {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.priority-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.priority-card {
+  display: flex;
+  height: 200px;
+  width: 100%;
+}
+
+.priority-card .task-grid-item {
+  height: 100%;
+  width: 100%;
+}
+
+.priority-state,
+.priority-empty {
+  text-align: center;
+  color: #999;
+  font-size: 1.05rem;
+  margin-top: 2.5rem;
+}
+
+@media (max-width: 640px) {
+  .priority-item {
+    grid-template-columns: 64px 1fr;
+  }
+}
