@@ -1,14 +1,29 @@
 services:
   db:
     image: postgres:15
+    container_name: task-buddy-db
     environment:
       POSTGRES_USER: taskbuddy
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: taskbuddy
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: task-buddy-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
 volumes:
   db-data:
+  pgadmin-data:

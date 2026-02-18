@@ -7,7 +7,7 @@ const router = Router();
 router.get("/active", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT * FROM tasks WHERE completed = false ORDER BY created_at DESC",
+      "SELECT * FROM tasks WHERE is_completed = false ORDER BY created_at DESC",
     );
     res.json(result.rows);
   } catch (err) {
@@ -20,7 +20,7 @@ router.get("/active", async (req, res) => {
 router.get("/completed", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT * FROM tasks WHERE completed = true ORDER BY created_at DESC",
+      "SELECT * FROM tasks WHERE is_completed = true ORDER BY created_at DESC",
     );
     res.json(result.rows);
   } catch (err) {
@@ -44,13 +44,14 @@ router.get("/", async (req, res) => {
 
 // create a task
 router.post("/", async (req, res) => {
-  const { title, body } = req.body as { title: string; body: string };
-  if (!title || !body) return res.status(400).json({ error: "missing fields" });
+  const { title, content } = req.body as { title: string; content: string };
+  if (!title || !content)
+    return res.status(400).json({ error: "missing fields" });
 
   try {
     const result = await pool.query(
-      "INSERT INTO tasks (title, body) VALUES ($1,$2) RETURNING *",
-      [title, body],
+      "INSERT INTO tasks (title, content) VALUES ($1,$2) RETURNING *",
+      [title, content],
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -65,7 +66,7 @@ router.put("/:id/complete", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "UPDATE tasks SET completed = true WHERE id = $1 RETURNING *",
+      "UPDATE tasks SET is_completed = true WHERE id = $1 RETURNING *",
       [id],
     );
     if (result.rows.length === 0)
@@ -83,7 +84,7 @@ router.put("/:id/uncomplete", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "UPDATE tasks SET completed = false WHERE id = $1 RETURNING *",
+      "UPDATE tasks SET is_completed = false WHERE id = $1 RETURNING *",
       [id],
     );
     if (result.rows.length === 0)
