@@ -1,8 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import "./SideNav.css";
 
 export default function SideNav() {
   const location = useLocation();
+  const { user } = useAuth();
+
+  // Only show sidenav if user is logged in
+  if (!user) return null;
 
   return (
     <nav className="side-nav">

@@ -3,17 +3,17 @@ import { useState } from "react";
 interface TaskProps {
   id: number;
   title: string;
-  body: string;
+  content: string;
   created_at: string;
   updated_at?: string;
-  completed: boolean;
+  is_completed: boolean;
   onSelect?: (task: {
     id: number;
     title: string;
-    body: string;
+    content: string;
     created_at: string;
     updated_at?: string;
-    completed: boolean;
+    is_completed: boolean;
   }) => void;
   onComplete?: (id: number) => void;
   onDelete?: (id: number) => void;
@@ -22,10 +22,10 @@ interface TaskProps {
 export default function Task({
   id,
   title,
-  body,
+  content,
   created_at,
   updated_at,
-  completed,
+  is_completed,
   onSelect,
   onComplete,
   onDelete,
@@ -42,18 +42,20 @@ export default function Task({
 
   const handleCardClick = () => {
     if (onSelect) {
-      onSelect({ id, title, body, created_at, updated_at, completed });
+      onSelect({ id, title, content, created_at, updated_at, is_completed });
     }
   };
 
   const handleMarkComplete = async (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    const newAnimClass = completed ? "completing-fail" : "completing-success";
+    const newAnimClass = is_completed
+      ? "completing-fail"
+      : "completing-success";
     setAnimationClass(newAnimClass);
 
     try {
-      const endpoint = completed
+      const endpoint = is_completed
         ? `/tasks/${id}/uncomplete`
         : `/tasks/${id}/complete`;
       const response = await fetch(`http://localhost:4000${endpoint}`, {
@@ -63,7 +65,7 @@ export default function Task({
 
       if (!response.ok) throw new Error("Failed to update task");
 
-      if (!completed) {
+      if (!is_completed) {
         setTimeout(() => {
           if (onComplete) {
             onComplete(id);
@@ -99,7 +101,7 @@ export default function Task({
 
   return (
     <div
-      className={`task-card ${completed ? "completed" : ""} ${animationClass}`}
+      className={`task-card ${is_completed ? "completed" : ""} ${animationClass}`}
       onClick={handleCardClick}
       style={{ cursor: "pointer" }}
     >
@@ -113,13 +115,13 @@ export default function Task({
       <button
         className="complete-btn"
         onClick={handleMarkComplete}
-        title={completed ? "Mark as incomplete" : "Mark as complete"}
+        title={is_completed ? "Mark as incomplete" : "Mark as complete"}
       >
         ✓
       </button>
       <h3>{title}</h3>
-      <p>{abbreviateBody(body)}</p>
-      {completed ? (
+      <p>{abbreviateBody(content)}</p>
+      {is_completed ? (
         <>
           <small style={{ color: "#4caf50", fontWeight: 600 }}>
             Task Completed

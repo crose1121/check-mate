@@ -6,9 +6,9 @@ import "./TasksPage.css";
 interface TaskType {
   id: number;
   title: string;
-  body: string;
+  content: string;
   created_at: string;
-  completed: boolean;
+  is_completed: boolean;
 }
 
 export default function TasksPage() {
@@ -67,9 +67,9 @@ export default function TasksPage() {
               <TaskGrid
                 id={task.id}
                 title={task.title}
-                body={task.body}
+                content={task.content}
                 created_at={task.created_at}
-                completed={task.completed}
+                is_completed={task.is_completed}
                 onSelect={setSelectedTask}
                 showCheckmark={true}
                 onComplete={handleTaskComplete}
@@ -84,7 +84,7 @@ export default function TasksPage() {
         isOpen={selectedTask !== null}
         onClose={() => setSelectedTask(null)}
         title={selectedTask?.title || ""}
-        body={selectedTask?.body || ""}
+        content={selectedTask?.content || ""}
         created_at={selectedTask?.created_at || ""}
       />
     </div>

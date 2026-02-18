@@ -3,10 +3,10 @@ import "./TaskGrid.css";
 interface TaskGridProps {
   id: number;
   title: string;
-  body: string;
+  content: string;
   created_at: string;
   updated_at?: string;
-  completed: boolean;
+  is_completed: boolean;
   onSelect?: (task: TaskGridProps) => void;
   isDragging?: boolean;
   onDragStart?: (e: React.DragEvent, taskId: number) => void;
@@ -25,10 +25,10 @@ interface TaskGridProps {
 export default function TaskGrid({
   id,
   title,
-  body,
+  content,
   created_at,
   updated_at,
-  completed,
+  is_completed,
   onSelect,
   isDragging,
   onDragStart,
@@ -57,7 +57,7 @@ export default function TaskGrid({
     }
 
     try {
-      const endpoint = completed
+      const endpoint = is_completed
         ? `/tasks/${id}/uncomplete`
         : `/tasks/${id}/complete`;
       const response = await fetch(`http://localhost:4000${endpoint}`, {
@@ -103,14 +103,14 @@ export default function TaskGrid({
 
   return (
     <div
-      className={`task-grid-item ${completed ? "completed" : ""} ${isDragging ? "dragging" : ""} ${dragOverId === id ? "drag-over" : ""} ${priorityIndex ? "priority-on" : ""}`}
+      className={`task-grid-item ${is_completed ? "completed" : ""} ${isDragging ? "dragging" : ""} ${dragOverId === id ? "drag-over" : ""} ${priorityIndex ? "priority-on" : ""}`}
       draggable={isDraggable}
       onDragStart={(e) => isDraggable && onDragStart?.(e, id)}
       onDragOver={(e) => isDraggable && onDragOver?.(e)}
       onDrop={(e) => isDraggable && onDrop?.(e, id)}
       onDragEnd={(e) => isDraggable && onDragEnd?.(e)}
       onClick={() =>
-        onSelect?.({ id, title, body, created_at, updated_at, completed })
+        onSelect?.({ id, title, content, created_at, updated_at, is_completed })
       }
     >
       {priorityIndex && (
@@ -131,14 +131,14 @@ export default function TaskGrid({
         <button
           className="task-grid-checkmark"
           onClick={handleMarkComplete}
-          title={completed ? "Mark as incomplete" : "Mark as complete"}
+          title={is_completed ? "Mark as incomplete" : "Mark as complete"}
         >
           ✓
         </button>
       )}
       <h4>{truncateText(title, 40)}</h4>
-      <p>{truncateText(body, 85)}</p>
-      {completed ? (
+      <p>{truncateText(content, 85)}</p>
+      {is_completed ? (
         <>
           <small style={{ color: "#4caf50", fontWeight: 600 }}>
             Task Completed

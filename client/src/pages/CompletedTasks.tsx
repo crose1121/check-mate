@@ -6,10 +6,10 @@ import "./TasksPage.css";
 interface TaskType {
   id: number;
   title: string;
-  body: string;
+  content: string;
   created_at: string;
   updated_at?: string;
-  completed: boolean;
+  is_completed: boolean;
 }
 
 export default function CompletedTasks() {
@@ -68,10 +68,10 @@ export default function CompletedTasks() {
               key={task.id}
               id={task.id}
               title={task.title}
-              body={task.body}
+              content={task.content}
               created_at={task.created_at}
               updated_at={task.updated_at}
-              completed={task.completed}
+              is_completed={task.is_completed}
               onSelect={setSelectedTask}
               onComplete={handleTaskUncomplete}
               onDelete={handleTaskDelete}
@@ -83,7 +83,7 @@ export default function CompletedTasks() {
         isOpen={selectedTask !== null}
         onClose={() => setSelectedTask(null)}
         title={selectedTask?.title || ""}
-        body={selectedTask?.body || ""}
+        content={selectedTask?.content || ""}
         created_at={selectedTask?.created_at || ""}
       />
     </div>

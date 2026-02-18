@@ -4,7 +4,7 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  body: string;
+  content: string;
   created_at: string;
 }
 
@@ -12,7 +12,7 @@ export default function Modal({
   isOpen,
   onClose,
   title,
-  body,
+  content,
   created_at,
 }: ModalProps) {
   if (!isOpen) return null;
@@ -26,7 +26,7 @@ export default function Modal({
           ×
         </button>
         <h2>{title}</h2>
-        <p className="modal-body">{body}</p>
+        <p className="modal-body">{content}</p>
         <small className="modal-date">{date}</small>
       </div>
     </div>

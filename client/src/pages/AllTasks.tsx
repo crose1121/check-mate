@@ -11,10 +11,10 @@ type SortType = "priority" | "oldest" | "newest" | "active" | "complete";
 interface TaskType {
   id: number;
   title: string;
-  body: string;
+  content: string;
   created_at: string;
   updated_at?: string;
-  completed: boolean;
+  is_completed: boolean;
 }
 
 export default function AllTasks() {
@@ -45,8 +45,8 @@ export default function AllTasks() {
 
   const sortByRecent = (taskList: TaskType[]) =>
     [...taskList].sort((a, b) => {
-      if (a.completed !== b.completed) {
-        return a.completed ? 1 : -1;
+      if (a.is_completed !== b.is_completed) {
+        return a.is_completed ? 1 : -1;
       }
 
       return getUpdatedTime(b) - getUpdatedTime(a);
@@ -54,8 +54,8 @@ export default function AllTasks() {
 
   const sortByOldest = (taskList: TaskType[]) =>
     [...taskList].sort((a, b) => {
-      if (a.completed !== b.completed) {
-        return a.completed ? 1 : -1;
+      if (a.is_completed !== b.is_completed) {
+        return a.is_completed ? 1 : -1;
       }
 
       return getUpdatedTime(a) - getUpdatedTime(b);
@@ -63,8 +63,8 @@ export default function AllTasks() {
 
   const sortByNewest = (taskList: TaskType[]) =>
     [...taskList].sort((a, b) => {
-      if (a.completed !== b.completed) {
-        return a.completed ? 1 : -1;
+      if (a.is_completed !== b.is_completed) {
+        return a.is_completed ? 1 : -1;
       }
 
       return getUpdatedTime(b) - getUpdatedTime(a);
@@ -72,8 +72,8 @@ export default function AllTasks() {
 
   const sortByActive = (taskList: TaskType[]) =>
     [...taskList].sort((a, b) => {
-      if (a.completed !== b.completed) {
-        return a.completed ? 1 : -1;
+      if (a.is_completed !== b.is_completed) {
+        return a.is_completed ? 1 : -1;
       }
 
       return getUpdatedTime(b) - getUpdatedTime(a);
@@ -81,8 +81,8 @@ export default function AllTasks() {
 
   const sortByCompleted = (taskList: TaskType[]) =>
     [...taskList].sort((a, b) => {
-      if (b.completed !== a.completed) {
-        return b.completed ? 1 : -1;
+      if (b.is_completed !== a.is_completed) {
+        return b.is_completed ? 1 : -1;
       }
 
       return getUpdatedTime(b) - getUpdatedTime(a);
@@ -93,11 +93,11 @@ export default function AllTasks() {
     const orderMap = new Map(order.map((id, index) => [id, index]));
 
     return [...taskList].sort((a, b) => {
-      if (a.completed !== b.completed) {
-        return a.completed ? 1 : -1;
+      if (a.is_completed !== b.is_completed) {
+        return a.is_completed ? 1 : -1;
       }
 
-      if (!a.completed && !b.completed) {
+      if (!a.is_completed && !b.is_completed) {
         const aIndex = orderMap.get(a.id);
         const bIndex = orderMap.get(b.id);
 
@@ -140,7 +140,7 @@ export default function AllTasks() {
   const handleTaskComplete = (id: number) => {
     setTasks((prev) =>
       prev.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
+        task.id === id ? { ...task, is_completed: !task.is_completed } : task,
       ),
     );
   };
@@ -159,12 +159,12 @@ export default function AllTasks() {
     );
 
   const filteredTasks = tasks
-    .filter((task) => (includeCompleted ? true : !task.completed))
+    .filter((task) => (includeCompleted ? true : !task.is_completed))
     .filter((task) =>
       searchText.toLowerCase() === ""
         ? true
         : task.title.toLowerCase().includes(searchText.toLowerCase()) ||
-          task.body.toLowerCase().includes(searchText.toLowerCase()),
+          task.content.toLowerCase().includes(searchText.toLowerCase()),
     );
 
   const getSortedTasks = (taskList: TaskType[]) => {
@@ -176,7 +176,7 @@ export default function AllTasks() {
       case "newest":
         return sortByNewest(taskList);
       case "active":
-        return sortByActive(taskList.filter((task) => !task.completed));
+        return sortByActive(taskList.filter((task) => !task.is_completed));
       case "complete":
         return sortByCompleted(taskList);
       default:
@@ -246,9 +246,9 @@ export default function AllTasks() {
                   <TaskGrid
                     id={task.id}
                     title={task.title}
-                    body={task.body}
+                    content={task.content}
                     created_at={task.created_at}
-                    completed={task.completed}
+                    is_completed={task.is_completed}
                     onSelect={setSelectedTask}
                     onDelete={handleTaskDelete}
                     showCheckmark={true}
@@ -288,7 +288,7 @@ export default function AllTasks() {
         isOpen={selectedTask !== null}
         onClose={() => setSelectedTask(null)}
         title={selectedTask?.title || ""}
-        body={selectedTask?.body || ""}
+        content={selectedTask?.content || ""}
         created_at={selectedTask?.created_at || ""}
       />
     </div>

@@ -9,6 +9,7 @@ export interface AuthUser {
 export interface AuthContextValue {
   user: AuthUser | null;
   token: string | null;
+  isLoading: boolean;
 
   setUser: Dispatch<SetStateAction<AuthUser | null>>;
   setToken: Dispatch<SetStateAction<string | null>>;
