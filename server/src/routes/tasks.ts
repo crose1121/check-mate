@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { pool } from "../db";
+import { v4 as uuidv4 } from "uuid";
 
 const router = Router();
 
@@ -7,7 +8,7 @@ const router = Router();
 router.get("/active", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT * FROM tasks WHERE is_completed = false ORDER BY created_at DESC",
+      "SELECT * FROM tasks WHERE COALESCE(is_completed, false) = false ORDER BY created_at DESC",
     );
     res.json(result.rows);
   } catch (err) {
@@ -44,14 +45,20 @@ router.get("/", async (req, res) => {
 
 // create a task
 router.post("/", async (req, res) => {
-  const { title, content } = req.body as { title: string; content: string };
-  if (!title || !content)
+  const { title, content, due_date, user_id } = req.body as {
+    title: string;
+    content: string;
+    due_date?: string | null;
+    user_id?: string;
+  };
+  if (!title || !content || !user_id)
     return res.status(400).json({ error: "missing fields" });
 
   try {
+    const taskId = uuidv4();
     const result = await pool.query(
-      "INSERT INTO tasks (title, content) VALUES ($1,$2) RETURNING *",
-      [title, content],
+      "INSERT INTO tasks (id, user_id, title, content, is_completed, due_date) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *",
+      [taskId, user_id, title, content, false, due_date ?? null],
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {

@@ -145,7 +145,7 @@ export default function TaskGrid({
           </small>
           {updated_at && (
             <small className="completed-text">
-              Completed on {new Date(updated_at).toLocaleDateString()}
+              on {new Date(updated_at).toLocaleDateString()}
             </small>
           )}
         </>

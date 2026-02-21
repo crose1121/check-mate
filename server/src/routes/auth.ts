@@ -19,6 +19,18 @@ interface LoginBody {
   password: string;
 }
 
+const ACHIEVEMENT_TASK_THRESHOLDS = [0, 2, 5, 7, 10, 20];
+
+function getWarrantedLevel(completedTasks: number): number {
+  return ACHIEVEMENT_TASK_THRESHOLDS.reduce((level, requiredTasks, index) => {
+    if (completedTasks >= requiredTasks) {
+      return index + 1;
+    }
+
+    return level;
+  }, 1);
+}
+
 // Register endpoint
 router.post("/register", async (req: Request, res: Response) => {
   try {
@@ -130,5 +142,57 @@ router.post("/login", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+
+router.get(
+  "/achievement-status/:userId",
+  async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+
+      const userResult = await pool.query(
+        "SELECT id, user_level FROM users WHERE id = $1",
+        [userId],
+      );
+
+      if (userResult.rows.length === 0) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const completedTasksResult = await pool.query(
+        "SELECT COUNT(*)::int AS count FROM tasks WHERE user_id = $1 AND COALESCE(is_completed, false) = true",
+        [userId],
+      );
+
+      const completedTasks = completedTasksResult.rows[0]?.count ?? 0;
+      const previousUserLevel = userResult.rows[0].user_level ?? 1;
+      const warrantedLevel = getWarrantedLevel(completedTasks);
+
+      const hasLevelChanged = warrantedLevel !== previousUserLevel;
+      const direction = hasLevelChanged
+        ? warrantedLevel > previousUserLevel
+          ? "promotion"
+          : "demotion"
+        : "none";
+
+      if (hasLevelChanged) {
+        await pool.query("UPDATE users SET user_level = $1 WHERE id = $2", [
+          warrantedLevel,
+          userId,
+        ]);
+      }
+
+      return res.json({
+        completedTasks,
+        previousUserLevel,
+        userLevel: warrantedLevel,
+        hasLevelChanged,
+        direction,
+      });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Server error" });
+    }
+  },
+);
 
 export default router;

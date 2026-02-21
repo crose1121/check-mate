@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Queen chess icon">
+  <defs>
+    <linearGradient id="queenGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe08a"/>
+      <stop offset="45%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#b8890b"/>
+    </linearGradient>
+    <linearGradient id="queenShadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#facc15" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#7c5b06" stop-opacity="1"/>
+    </linearGradient>
+    <filter id="goldGlow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="2.4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#goldGlow)">
+    <rect x="31" y="104" width="66" height="12" rx="4" fill="url(#queenShadow)"/>
+    <rect x="37" y="94" width="54" height="10" rx="4" fill="url(#queenGold)"/>
+    <rect x="55" y="72" width="18" height="24" rx="4" fill="url(#queenGold)"/>
+
+    <path d="M40 74h48l8-36-14 12-12-20-10 18-14-18-12 20-14-12z" fill="url(#queenGold)"/>
+
+    <circle cx="30" cy="36" r="7" fill="url(#queenGold)"/>
+    <circle cx="48" cy="25" r="6" fill="url(#queenGold)"/>
+    <circle cx="64" cy="20" r="7" fill="url(#queenGold)"/>
+    <circle cx="80" cy="25" r="6" fill="url(#queenGold)"/>
+    <circle cx="98" cy="36" r="7" fill="url(#queenGold)"/>
+
+    <path d="M42 73h44" stroke="#5f4306" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+    <path d="M62 40l-7 14M74 40l7 14" stroke="#5f4306" stroke-width="2.4" stroke-linecap="round" opacity="0.55"/>
+    <path d="M54 53h20" stroke="#5f4306" stroke-width="2.3" stroke-linecap="round" opacity="0.5"/>
+  </g>
+</svg>

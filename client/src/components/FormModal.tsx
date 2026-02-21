@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { apiCall } from "../lib/api";
 import "./FormModal.css";
@@ -8,31 +8,20 @@ interface FormModalProps {
   isOpen: boolean;
   onClose: () => void;
   mode: "login" | "register" | "newTask";
-  onModeChange?: (mode: "login" | "register") => void;
 }
 
-export default function FormModal({
-  isOpen,
-  onClose,
-  mode,
-  onModeChange,
-}: FormModalProps) {
+export default function FormModal({ isOpen, onClose, mode }: FormModalProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { setUser, setToken } = useAuth();
+  const { user, setUser, setToken } = useAuth();
   const navigate = useNavigate();
-
-  const handleToggleAuthMode = () => {
-    if (onModeChange) {
-      onModeChange(mode === "login" ? "register" : "login");
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +67,12 @@ export default function FormModal({
         // Handle task creation
         const response = await apiCall("/tasks", {
           method: "POST",
-          body: JSON.stringify({ title, content }),
+          body: JSON.stringify({
+            title,
+            content,
+            due_date: dueDate || null,
+            user_id: user?.id,
+          }),
         });
 
         if (!response.ok) {
@@ -90,12 +84,13 @@ export default function FormModal({
         // Reset form and close
         setTitle("");
         setContent("");
+        setDueDate("");
         onClose();
 
         // Navigate to tasks page
         navigate("/tasks");
       }
-    } catch (err) {
+    } catch {
       setError("Network error. Please try again.");
     } finally {
       setLoading(false);
@@ -216,6 +211,16 @@ export default function FormModal({
                   required
                 />
               </div>
+
+              <div className="form-group">
+                <label htmlFor="taskDueDate">Due Date</label>
+                <input
+                  id="taskDueDate"
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                />
+              </div>
             </>
           )}
 
@@ -242,13 +247,12 @@ export default function FormModal({
               {mode === "login"
                 ? "Don't have an account? "
                 : "Already have an account? "}
-              <button
-                type="button"
+              <Link
+                to={mode === "login" ? "/register" : "/login"}
                 className="form-modal-toggle"
-                onClick={handleToggleAuthMode}
               >
                 {mode === "login" ? "Register" : "Sign In"}
-              </button>
+              </Link>
             </p>
           </div>
         )}

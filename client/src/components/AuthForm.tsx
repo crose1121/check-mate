@@ -69,7 +69,7 @@ export default function AuthForm({
       // Navigate to tasks page after successful login/registration
       navigate("/tasks");
     } catch (err) {
-      setError("Network error. Please try again.");
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }

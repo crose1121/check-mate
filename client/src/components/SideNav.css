@@ -78,6 +78,39 @@
   font-weight: 500;
 }
 
+.side-nav-toggle {
+  width: 100%;
+  background: transparent;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.side-nav-chevron {
+  margin-left: auto;
+  color: inherit;
+  font-size: 0.85rem;
+}
+
+.side-nav-sublist {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.side-nav-sublink {
+  margin-left: 2rem;
+  padding-top: 0.55rem;
+  padding-bottom: 0.55rem;
+  font-size: 0.9rem;
+}
+
 .side-nav-link:hover {
   color: #e0e0e0;
   background: rgba(102, 126, 234, 0.1);

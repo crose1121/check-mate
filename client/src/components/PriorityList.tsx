@@ -153,7 +153,7 @@ export default function PriorityList() {
   return (
     <>
       {tasks.length === 0 ? (
-        <p className="priority-empty">No active tasks. Create one!</p>
+        <p className="priority-empty">Create tasks before creating a priority list</p>
       ) : (
         <div className="priority-list">
           {tasks.map((task, index) => (

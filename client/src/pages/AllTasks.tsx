@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import TaskGrid from "../components/TaskGrid";
 import SortSelector from "../components/SortSelector";
 import FilterMenu from "../components/FilterMenu";
 import ViewMenu from "../components/ViewMenu";
 import Modal from "../components/Modal";
+import { apiCall } from "../lib/api";
 import "./AllTasks.css";
 
 type SortType = "priority" | "oldest" | "newest" | "active" | "complete";
@@ -18,6 +20,7 @@ interface TaskType {
 }
 
 export default function AllTasks() {
+  const location = useLocation();
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -114,8 +117,11 @@ export default function AllTasks() {
 
   useEffect(() => {
     const fetchTasks = async () => {
+      setLoading(true);
+      setError(null);
+
       try {
-        const response = await fetch("http://localhost:4000/tasks");
+        const response = await apiCall("/tasks");
         if (!response.ok) throw new Error("Failed to fetch tasks");
         const data = await response.json();
         setTasks(data);
@@ -127,7 +133,7 @@ export default function AllTasks() {
     };
 
     fetchTasks();
-  }, []);
+  }, [location.pathname]);
 
   useEffect(() => {
     setCurrentPage(1);

@@ -28,16 +28,34 @@
 
 .logo {
   font-size: 1.5rem; /* larger title font */
-  margin-left: 110px; /* offset for 220px side nav width */
   text-decoration: none;
   color: white;
   transition: all 0.3s ease;
+}
+
+.logo-with-sidenav {
+  margin-left: 110px; /* offset for 220px side nav width */
 }
 
 .brand {
   display: inline-flex;
   gap: 0.35rem;
   align-items: center;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.brand-icon {
+  width: 30px;
+  height: 30px;
+  display: block;
+  margin-right: 0.2rem;
+  filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.35));
 }
 
 .brand-task,
@@ -52,14 +70,14 @@
 .brand-task {
   font-weight: 700;
   background-image: linear-gradient(90deg, #667eea, #764ba2);
-  font-size: 1.25rem; /* increase task size */
+  font-size: 1.1rem;
 }
 
 .brand-buddy {
   font-weight: 900;
   letter-spacing: -0.5px;
   background-image: linear-gradient(90deg, #f093fb, #f5576c);
-  font-size: 1.3rem; /* increase buddy size */
+  font-size: 1.15rem;
 }
 
 .logo:hover {
@@ -87,6 +105,25 @@
   transition: all 0.3s ease;
   position: relative;
   letter-spacing: 0.3px;
+}
+
+.nav-auth-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+  transform: none;
+  outline: none;
+}
+
+.nav-auth-btn:hover,
+.nav-auth-btn:focus,
+.nav-auth-btn:focus-visible,
+.nav-auth-btn:active {
+  background: none;
+  box-shadow: none;
+  transform: none;
+  outline: none;
 }
 
 .nav-link:hover {
