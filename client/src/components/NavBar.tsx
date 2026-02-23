@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import checkMateLogo from "../assets/CheckMateLogo.png";
+import AppTitle from "./AppTitle";
 import "./NavBar.css";
 
 export default function NavBar() {
@@ -51,17 +51,7 @@ export default function NavBar() {
 
         <div className="nav-center">
           <Link to="/" className={`logo ${user ? "logo-with-sidenav" : ""}`}>
-            <span className="brand">
-              <img
-                src={checkMateLogo}
-                alt="CheckMate logo"
-                className="brand-icon"
-              />
-              <span className="brand-text">
-                <span className="brand-task">Check</span>
-                <span className="brand-buddy">Mate</span>
-              </span>
-            </span>
+            <AppTitle height={30} width={30} />
           </Link>
         </div>
 

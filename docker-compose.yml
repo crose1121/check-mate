@@ -1,11 +1,11 @@
 services:
   db:
     image: postgres:15
-    container_name: task-buddy-db
+    container_name: checkmate-db
     environment:
-      POSTGRES_USER: taskbuddy
+      POSTGRES_USER: checkmate
       POSTGRES_PASSWORD: secret
-      POSTGRES_DB: taskbuddy
+      POSTGRES_DB: checkmate
     ports:
       - "5432:5432"
     volumes:
@@ -13,7 +13,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: task-buddy-pgadmin
+    container_name: checkmate-pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin

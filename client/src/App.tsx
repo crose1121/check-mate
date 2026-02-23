@@ -37,7 +37,6 @@ export default function App() {
 
     return (
       <>
-        <NavBar />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LandingPage />} />

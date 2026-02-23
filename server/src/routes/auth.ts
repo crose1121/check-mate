@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
 interface RegisterBody {
   email: string;
