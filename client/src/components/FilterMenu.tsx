@@ -2,14 +2,18 @@ import { useState, useRef, useEffect } from "react";
 import "./FilterMenu.css";
 
 interface FilterMenuProps {
-  includeCompleted: boolean;
+  showPending: boolean;
+  onPendingChange: (include: boolean) => void;
+  showCompleted: boolean;
   onCompletedChange: (include: boolean) => void;
   searchText: string;
   onSearchChange: (text: string) => void;
 }
 
 export default function FilterMenu({
-  includeCompleted,
+  showPending,
+  onPendingChange,
+  showCompleted,
   onCompletedChange,
   searchText,
   onSearchChange,
@@ -57,10 +61,18 @@ export default function FilterMenu({
         <div className="filter-menu-content">
           <div className="filter-field">
             <label className="filter-checkbox-label">
-              <span>Completed</span>
+              <span>Show Pending</span>
               <input
                 type="checkbox"
-                checked={includeCompleted}
+                checked={showPending}
+                onChange={(e) => onPendingChange(e.target.checked)}
+              />
+            </label>
+            <label className="filter-checkbox-label">
+              <span>Show Completed</span>
+              <input
+                type="checkbox"
+                checked={showCompleted}
                 onChange={(e) => onCompletedChange(e.target.checked)}
               />
             </label>

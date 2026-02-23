@@ -5,6 +5,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
+import type { Location } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import NavBar from "./components/NavBar";
 import SideNav from "./components/SideNav";
@@ -14,12 +15,15 @@ import AllTasks from "./pages/AllTasks";
 import PriorityListPage from "./pages/PriorityListPage";
 import CompletedTasks from "./pages/CompletedTasks";
 import Achievements from "./pages/Achievements";
+import CalendarPage from "./pages/CalendarPage";
 import "./App.css";
 
 export default function App() {
   const { user, isLoading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const state = location.state as { background?: Location } | undefined;
+  const backgroundLocation = state?.background;
 
   // Show nothing while checking for stored session
   if (isLoading) {
@@ -59,11 +63,12 @@ export default function App() {
       <NavBar />
       <SideNav />
       <main className="app-content-with-sidenav">
-        <Routes>
+        <Routes location={backgroundLocation || location}>
           <Route path="/" element={<AllTasks />} />
           <Route path="/tasks" element={<AllTasks />} />
           <Route path="/all" element={<AllTasks />} />
           <Route path="/priority" element={<PriorityListPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/completed" element={<CompletedTasks />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/new" element={<AllTasks />} />

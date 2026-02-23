@@ -36,6 +36,59 @@
   border-left: 5px solid #667eea;
 }
 
+.modal-layout {
+  /* display: grid;
+  grid-template-columns: 120px 1fr; */
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.modal-priority {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+  min-height: 100%;
+}
+
+.modal-priority-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #6b7280;
+}
+
+.modal-priority-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #0c0c0c;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(0, 0, 0, 0.04);
+}
+
+.modal-priority-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px dashed #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 1rem;
+}
+
+.modal-main {
+  display: flex;
+  flex-direction: column;
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(40px);
@@ -69,9 +122,10 @@
   color: #333;
 }
 
-.modal-content h2 {
+.modal-content h2,
+.modal-title {
   margin: 0 0 1.5rem 0;
-  color: #2c3e50;
+  color: #000 !important;
   font-size: 1.8rem;
   font-weight: 700;
   line-height: 1.3;
@@ -92,4 +146,24 @@
   font-weight: 500;
   letter-spacing: 0.3px;
   text-transform: uppercase;
+}
+
+.modal-date--completed {
+  color: #22c55e;
+}
+
+.modal-date--due {
+  color: #f5576c;
+}
+
+@media (max-width: 640px) {
+  .modal-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-priority {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+  }
 }

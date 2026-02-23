@@ -1,25 +1,27 @@
 import "./TaskGrid.css";
+import { useAuth } from "../hooks/useAuth";
 
 interface TaskGridProps {
-  id: number;
+  id: string;
   title: string;
   content: string;
   created_at: string;
+  due_date?: string | null;
   updated_at?: string;
   is_completed: boolean;
   onSelect?: (task: TaskGridProps) => void;
   isDragging?: boolean;
-  onDragStart?: (e: React.DragEvent, taskId: number) => void;
+  onDragStart?: (e: React.DragEvent, taskId: string) => void;
   onDragOver?: (e: React.DragEvent) => void;
-  onDrop?: (e: React.DragEvent, targetId: number) => void;
+  onDrop?: (e: React.DragEvent, targetId: string) => void;
   onDragEnd?: (e: React.DragEvent) => void;
-  dragOverId?: number | null;
+  dragOverId?: string | null;
   isDraggable?: boolean;
   showCheckmark?: boolean;
   suppressActionsUntil?: number;
   priorityIndex?: number;
-  onComplete?: (id: number) => void;
-  onDelete?: (id: number) => void;
+  onComplete?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 export default function TaskGrid({
@@ -27,6 +29,7 @@ export default function TaskGrid({
   title,
   content,
   created_at,
+  due_date,
   updated_at,
   is_completed,
   onSelect,
@@ -43,6 +46,7 @@ export default function TaskGrid({
   onComplete,
   onDelete,
 }: TaskGridProps) {
+  const { user } = useAuth();
   const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength
       ? text.substring(0, maxLength) + "..."
@@ -60,7 +64,11 @@ export default function TaskGrid({
       const endpoint = is_completed
         ? `/tasks/${id}/uncomplete`
         : `/tasks/${id}/complete`;
-      const response = await fetch(`http://localhost:4000${endpoint}`, {
+      const userId = user?.id;
+      const scopedEndpoint = userId
+        ? `${endpoint}?userId=${encodeURIComponent(userId)}`
+        : endpoint;
+      const response = await fetch(`http://localhost:4000${scopedEndpoint}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
       });
@@ -83,7 +91,11 @@ export default function TaskGrid({
     }
 
     try {
-      const response = await fetch(`http://localhost:4000/tasks/${id}`, {
+      const userId = user?.id;
+      const endpoint = userId
+        ? `/tasks/${id}?userId=${encodeURIComponent(userId)}`
+        : `/tasks/${id}`;
+      const response = await fetch(`http://localhost:4000${endpoint}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       });
@@ -110,7 +122,15 @@ export default function TaskGrid({
       onDrop={(e) => isDraggable && onDrop?.(e, id)}
       onDragEnd={(e) => isDraggable && onDragEnd?.(e)}
       onClick={() =>
-        onSelect?.({ id, title, content, created_at, updated_at, is_completed })
+        onSelect?.({
+          id,
+          title,
+          content,
+          created_at,
+          due_date,
+          updated_at,
+          is_completed,
+        })
       }
     >
       {priorityIndex && (
@@ -150,7 +170,11 @@ export default function TaskGrid({
           )}
         </>
       ) : (
-        <small>{new Date(created_at).toLocaleDateString()}</small>
+        <small>
+          {due_date
+            ? `Due ${new Date(due_date).toLocaleDateString()}`
+            : new Date(created_at).toLocaleDateString()}
+        </small>
       )}
       {dragOverId === id && isDraggable && (
         <div className="drop-indicator">↓ Drop here</div>

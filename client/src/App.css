@@ -1,7 +1,6 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: calc(7px + 64px) 7px 7px;
   text-align: center;
 }
 
@@ -43,4 +42,41 @@
 
 .app-content-with-sidenav {
   margin-left: 220px;
+  padding: 80px 12px 12px;
+}
+
+.page-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.page-heading-subtitle {
+  margin: 0;
+  color: #999;
+  font-size: 0.9rem;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.page-heading-title {
+  margin: 0.2rem 0 0;
+  color: #e0e0e0;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  position: relative;
+  padding-bottom: 1rem;
+  text-align: left;
+}
+
+.page-heading-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
 }

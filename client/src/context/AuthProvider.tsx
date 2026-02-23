@@ -29,6 +29,24 @@ function getInitialAuthState(): InitialAuthState {
   const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
   const storedSessionStartedAt = localStorage.getItem(SESSION_STARTED_AT_KEY);
 
+  if (storedToken === "guest-session") {
+    localStorage.clear();
+    return { user: null, token: null, sessionStartedAt: 0 };
+  }
+
+  if (storedUser) {
+    try {
+      const parsedUser = JSON.parse(storedUser) as { id?: unknown };
+      if (parsedUser?.id === "guest-user") {
+        localStorage.clear();
+        return { user: null, token: null, sessionStartedAt: 0 };
+      }
+    } catch {
+      localStorage.clear();
+      return { user: null, token: null, sessionStartedAt: 0 };
+    }
+  }
+
   if (!(storedUser && storedToken && storedSessionStartedAt)) {
     if (storedUser || storedToken || storedSessionStartedAt) {
       clearStoredAuth();

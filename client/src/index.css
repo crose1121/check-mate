@@ -30,6 +30,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background: #1a1a1a;
+  scrollbar-gutter: stable;
 }
 
 h1 {

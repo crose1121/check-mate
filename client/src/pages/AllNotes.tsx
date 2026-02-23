@@ -181,8 +181,10 @@ export default function AllNotes() {
         isOpen={selectedNote !== null}
         onClose={() => setSelectedNote(null)}
         title={selectedNote?.title || ""}
-        body={selectedNote?.body || ""}
+        content={selectedNote?.body || ""}
         created_at={selectedNote?.created_at || ""}
+        updated_at={selectedNote?.updated_at}
+        is_completed={selectedNote?.completed}
       />
     </div>
   );

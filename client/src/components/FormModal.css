@@ -1,25 +1,9 @@
-.form-modal-overlay {
+.form-modal-shell {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
-  backdrop-filter: blur(4px);
-  animation: fadeInOverlay 0.3s ease;
-}
-
-@keyframes fadeInOverlay {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .form-modal-container {
@@ -69,6 +53,18 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
+.form-modal-close:focus,
+.form-modal-close:focus-visible,
+.form-modal-close:active {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.form-modal-close::-moz-focus-inner {
+  border: 0;
+}
+
 .form-modal-header {
   margin-bottom: 2rem;
   text-align: center;
@@ -94,6 +90,23 @@
 
 .form-modal-form {
   margin-bottom: 1.5rem;
+}
+
+.form-modal-form > * {
+  transition:
+    filter 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.form-modal-form:has(.due-date-group input[type="date"]:focus)
+  > *:not(.due-date-group) {
+  filter: blur(2px);
+  opacity: 0.45;
+}
+
+.form-modal-form:has(.due-date-group input[type="date"]:focus) .due-date-group {
+  position: relative;
+  z-index: 1;
 }
 
 .form-row {
@@ -194,7 +207,7 @@
 .form-modal-toggle {
   background: none;
   border: none;
-  color: #667eea;
+  color: #764ba2;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -209,7 +222,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .form-modal-container {
     padding: 2rem;
   }
@@ -221,4 +234,4 @@
   .form-row {
     grid-template-columns: 1fr;
   }
-}
+} */

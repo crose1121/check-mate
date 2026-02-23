@@ -1,22 +1,23 @@
 import { useState } from "react";
+import { useAuth } from "../hooks/useAuth";
 
 interface TaskProps {
-  id: number;
+  id: string;
   title: string;
   content: string;
   created_at: string;
   updated_at?: string;
   is_completed: boolean;
   onSelect?: (task: {
-    id: number;
+    id: string;
     title: string;
     content: string;
     created_at: string;
     updated_at?: string;
     is_completed: boolean;
   }) => void;
-  onComplete?: (id: number) => void;
-  onDelete?: (id: number) => void;
+  onComplete?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 export default function Task({
@@ -30,6 +31,7 @@ export default function Task({
   onComplete,
   onDelete,
 }: TaskProps) {
+  const { user } = useAuth();
   const date = new Date(created_at).toLocaleDateString();
   const [animationClass, setAnimationClass] = useState("");
 
@@ -58,7 +60,11 @@ export default function Task({
       const endpoint = is_completed
         ? `/tasks/${id}/uncomplete`
         : `/tasks/${id}/complete`;
-      const response = await fetch(`http://localhost:4000${endpoint}`, {
+      const userId = user?.id;
+      const scopedEndpoint = userId
+        ? `${endpoint}?userId=${encodeURIComponent(userId)}`
+        : endpoint;
+      const response = await fetch(`http://localhost:4000${scopedEndpoint}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
       });
@@ -84,7 +90,11 @@ export default function Task({
     e.stopPropagation();
 
     try {
-      const response = await fetch(`http://localhost:4000/tasks/${id}`, {
+      const userId = user?.id;
+      const endpoint = userId
+        ? `/tasks/${id}?userId=${encodeURIComponent(userId)}`
+        : `/tasks/${id}`;
+      const response = await fetch(`http://localhost:4000${endpoint}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       });

@@ -6,27 +6,31 @@ import FilterMenu from "../components/FilterMenu";
 import ViewMenu from "../components/ViewMenu";
 import Modal from "../components/Modal";
 import { apiCall } from "../lib/api";
+import { useAuth } from "../hooks/useAuth";
 import "./AllTasks.css";
 
 type SortType = "priority" | "oldest" | "newest" | "active" | "complete";
 
 interface TaskType {
-  id: number;
+  id: string;
   title: string;
   content: string;
   created_at: string;
+  due_date?: string | null;
   updated_at?: string;
   is_completed: boolean;
 }
 
 export default function AllTasks() {
+  const { user } = useAuth();
   const location = useLocation();
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
   const [sortType, setSortType] = useState<SortType>("newest");
-  const [includeCompleted, setIncludeCompleted] = useState(true);
+  const [showPending, setShowPending] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [tasksPerPage, setTasksPerPage] = useState(15);
@@ -35,43 +39,45 @@ export default function AllTasks() {
   const getUpdatedTime = (task: TaskType) =>
     new Date(task.updated_at ?? task.created_at).getTime();
 
-  const getPriorityOrder = (): number[] => {
+  const getPriorityOrder = (): string[] => {
     try {
       const stored = localStorage.getItem("priorityOrder");
       if (!stored) return [];
       const parsed = JSON.parse(stored);
-      return Array.isArray(parsed) ? parsed.filter(Number.isInteger) : [];
+      return Array.isArray(parsed)
+        ? parsed
+            .filter(
+              (value) => typeof value === "string" || typeof value === "number",
+            )
+            .map((value) => String(value))
+        : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const syncPriorityOrder = (taskList: TaskType[]) => {
+    try {
+      const existing = getPriorityOrder();
+      const ids = taskList.filter((task) => !task.is_completed).map((task) => task.id);
+      const preserved = existing.filter((id) => ids.includes(id));
+      const missing = ids.filter((id) => !preserved.includes(id));
+      const nextOrder = [...preserved, ...missing];
+      localStorage.setItem("priorityOrder", JSON.stringify(nextOrder));
+      return nextOrder;
     } catch {
       return [];
     }
   };
 
   const sortByRecent = (taskList: TaskType[]) =>
-    [...taskList].sort((a, b) => {
-      if (a.is_completed !== b.is_completed) {
-        return a.is_completed ? 1 : -1;
-      }
-
-      return getUpdatedTime(b) - getUpdatedTime(a);
-    });
+    [...taskList].sort((a, b) => getUpdatedTime(b) - getUpdatedTime(a));
 
   const sortByOldest = (taskList: TaskType[]) =>
-    [...taskList].sort((a, b) => {
-      if (a.is_completed !== b.is_completed) {
-        return a.is_completed ? 1 : -1;
-      }
-
-      return getUpdatedTime(a) - getUpdatedTime(b);
-    });
+    [...taskList].sort((a, b) => getUpdatedTime(a) - getUpdatedTime(b));
 
   const sortByNewest = (taskList: TaskType[]) =>
-    [...taskList].sort((a, b) => {
-      if (a.is_completed !== b.is_completed) {
-        return a.is_completed ? 1 : -1;
-      }
-
-      return getUpdatedTime(b) - getUpdatedTime(a);
-    });
+    [...taskList].sort((a, b) => getUpdatedTime(b) - getUpdatedTime(a));
 
   const sortByActive = (taskList: TaskType[]) =>
     [...taskList].sort((a, b) => {
@@ -96,19 +102,13 @@ export default function AllTasks() {
     const orderMap = new Map(order.map((id, index) => [id, index]));
 
     return [...taskList].sort((a, b) => {
-      if (a.is_completed !== b.is_completed) {
-        return a.is_completed ? 1 : -1;
-      }
+      const aIndex = orderMap.get(a.id);
+      const bIndex = orderMap.get(b.id);
 
-      if (!a.is_completed && !b.is_completed) {
-        const aIndex = orderMap.get(a.id);
-        const bIndex = orderMap.get(b.id);
-
-        if (aIndex !== undefined || bIndex !== undefined) {
-          if (aIndex === undefined) return 1;
-          if (bIndex === undefined) return -1;
-          return aIndex - bIndex;
-        }
+      if (aIndex !== undefined || bIndex !== undefined) {
+        if (aIndex === undefined) return 1;
+        if (bIndex === undefined) return -1;
+        return aIndex - bIndex;
       }
 
       return getUpdatedTime(b) - getUpdatedTime(a);
@@ -121,9 +121,19 @@ export default function AllTasks() {
       setError(null);
 
       try {
-        const response = await apiCall("/tasks");
+        const userId = user?.id;
+        if (userId === "guest-user") {
+          setTasks([]);
+          return;
+        }
+
+        const endpoint = userId
+          ? `/tasks?userId=${encodeURIComponent(userId)}`
+          : "/tasks";
+        const response = await apiCall(endpoint);
         if (!response.ok) throw new Error("Failed to fetch tasks");
         const data = await response.json();
+        syncPriorityOrder(data);
         setTasks(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
@@ -133,22 +143,28 @@ export default function AllTasks() {
     };
 
     fetchTasks();
-  }, [location.pathname]);
+  }, [location.pathname, user?.id]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [sortType, searchText, includeCompleted]);
+  }, [sortType, searchText, showPending, showCompleted]);
 
-  const handleTaskDelete = (id: number) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const handleTaskDelete = (id: string) => {
+    setTasks((prev) => {
+      const next = prev.filter((task) => task.id !== id);
+      syncPriorityOrder(next);
+      return next;
+    });
   };
 
-  const handleTaskComplete = (id: number) => {
-    setTasks((prev) =>
-      prev.map((task) =>
+  const handleTaskComplete = (id: string) => {
+    setTasks((prev) => {
+      const next = prev.map((task) =>
         task.id === id ? { ...task, is_completed: !task.is_completed } : task,
-      ),
-    );
+      );
+      syncPriorityOrder(next);
+      return next;
+    });
   };
 
   if (loading)
@@ -165,7 +181,11 @@ export default function AllTasks() {
     );
 
   const filteredTasks = tasks
-    .filter((task) => (includeCompleted ? true : !task.is_completed))
+    .filter((task) => {
+      const pendingMatch = showPending && !task.is_completed;
+      const completedMatch = showCompleted && task.is_completed;
+      return pendingMatch || completedMatch;
+    })
     .filter((task) =>
       searchText.toLowerCase() === ""
         ? true
@@ -196,6 +216,15 @@ export default function AllTasks() {
   const startIndex = (currentPage - 1) * tasksPerPage;
   const endIndex = startIndex + tasksPerPage;
   const paginatedTasks = sortedTasks.slice(startIndex, endIndex);
+  const noTasksToDisplay = sortedTasks.length === 0;
+  const hasAnyTasks = tasks.length > 0;
+
+  const selectedPriorityIndex = (() => {
+    if (!selectedTask) return undefined;
+    const order = getPriorityOrder();
+    const pos = order.indexOf(selectedTask.id);
+    return pos !== -1 ? pos + 1 : undefined;
+  })();
 
   const handleViewModeChange = (mode: "grid" | "list") => {
     setViewMode(mode);
@@ -217,7 +246,10 @@ export default function AllTasks() {
   return (
     <div className="all-tasks-container">
       <div className="all-tasks-header">
-        <h2>All Tasks</h2>
+        <div className="page-heading">
+          <p className="page-heading-subtitle">Tasks</p>
+          <h2 className="page-heading-title">All Tasks</h2>
+        </div>
         <div className="all-tasks-actions">
           <ViewMenu
             viewMode={viewMode}
@@ -226,22 +258,28 @@ export default function AllTasks() {
             onTasksPerPageChange={handleTasksPerPageChange}
           />
           <FilterMenu
-            includeCompleted={includeCompleted}
-            onCompletedChange={setIncludeCompleted}
+            showPending={showPending}
+            onPendingChange={setShowPending}
+            showCompleted={showCompleted}
+            onCompletedChange={setShowCompleted}
             searchText={searchText}
             onSearchChange={setSearchText}
           />
           <SortSelector currentSort={sortType} onSortChange={setSortType} />
         </div>
       </div>
-      {paginatedTasks.length === 0 && sortedTasks.length === 0 ? (
-        <p>No tasks yet. Create one!</p>
+      {noTasksToDisplay ? (
+        <p>
+          {hasAnyTasks
+            ? "No tasks match your filters."
+            : "No tasks yet. Create one!"}
+        </p>
       ) : (
         <>
           <div
             className={`tasks-grid-layout ${viewMode === "list" ? "list-view" : ""}`}
           >
-            {paginatedTasks.map((task, index) => {
+            {paginatedTasks.map((task) => {
               const priorityOrder = getPriorityOrder();
               const priorityPosition = priorityOrder.indexOf(task.id);
               const priorityIndex =
@@ -254,6 +292,7 @@ export default function AllTasks() {
                     title={task.title}
                     content={task.content}
                     created_at={task.created_at}
+                    due_date={task.due_date}
                     is_completed={task.is_completed}
                     onSelect={setSelectedTask}
                     onDelete={handleTaskDelete}
@@ -296,6 +335,10 @@ export default function AllTasks() {
         title={selectedTask?.title || ""}
         content={selectedTask?.content || ""}
         created_at={selectedTask?.created_at || ""}
+        updated_at={selectedTask?.updated_at}
+        due_date={selectedTask?.due_date}
+        is_completed={selectedTask?.is_completed}
+        priorityIndex={selectedPriorityIndex}
       />
     </div>
   );

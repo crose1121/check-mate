@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Box, Modal } from "@mui/material";
 import { useAuth } from "../hooks/useAuth";
 import { apiCall } from "../lib/api";
 import "./FormModal.css";
@@ -97,166 +98,166 @@ export default function FormModal({ isOpen, onClose, mode }: FormModalProps) {
     }
   };
 
-  if (!isOpen) return null;
-
   const isAuthMode = mode === "login" || mode === "register";
 
   return (
-    <div className="form-modal-overlay" onClick={onClose}>
-      <div
-        className="form-modal-container"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button className="form-modal-close" onClick={onClose}>
-          ×
-        </button>
+    <Modal open={isOpen} onClose={onClose}>
+      <Box className="form-modal-shell">
+        <Box
+          className="form-modal-container"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button className="form-modal-close" onClick={onClose}>
+            ×
+          </button>
 
-        <div className="form-modal-header">
-          <h2>
-            {mode === "login"
-              ? "Welcome Back"
-              : mode === "register"
-                ? "Create Account"
-                : "Create a New Task"}
-          </h2>
-          <p className="form-modal-subtitle">
-            {mode === "login"
-              ? "Sign in to your account"
-              : mode === "register"
-                ? "Join Task Buddy today"
-                : "Add a new task to your list"}
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="form-modal-form">
-          {/* Auth Fields */}
-          {mode === "register" && (
-            <>
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="firstName">First Name</label>
-                  <input
-                    id="firstName"
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="John"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="lastName">Last Name</label>
-                  <input
-                    id="lastName"
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Doe"
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
-          {isAuthMode && (
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-          )}
-
-          {isAuthMode && (
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
-            </div>
-          )}
-
-          {/* Task Fields */}
-          {mode === "newTask" && (
-            <>
-              <div className="form-group">
-                <label htmlFor="taskTitle">Title</label>
-                <input
-                  id="taskTitle"
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter task title..."
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="taskContent">Content</label>
-                <textarea
-                  id="taskContent"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Write your task..."
-                  rows={6}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="taskDueDate">Due Date</label>
-                <input
-                  id="taskDueDate"
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                />
-              </div>
-            </>
-          )}
-
-          {error && <div className="form-modal-error">{error}</div>}
-
-          <button
-            type="submit"
-            className="form-modal-submit"
-            disabled={loading}
-          >
-            {loading
-              ? "Loading..."
-              : mode === "login"
-                ? "Sign In"
+          <div className="form-modal-header">
+            <h2>
+              {mode === "login"
+                ? "Welcome Back"
                 : mode === "register"
                   ? "Create Account"
-                  : "Save Task"}
-          </button>
-        </form>
-
-        {isAuthMode && (
-          <div className="form-modal-footer">
-            <p>
+                  : "Create a New Task"}
+            </h2>
+            <p className="form-modal-subtitle">
               {mode === "login"
-                ? "Don't have an account? "
-                : "Already have an account? "}
-              <Link
-                to={mode === "login" ? "/register" : "/login"}
-                className="form-modal-toggle"
-              >
-                {mode === "login" ? "Register" : "Sign In"}
-              </Link>
+                ? "Sign in to your account"
+                : mode === "register"
+                  ? "Join Check Mate Today"
+                  : "Add a new task to your list"}
             </p>
           </div>
-        )}
-      </div>
-    </div>
+
+          <form onSubmit={handleSubmit} className="form-modal-form">
+            {/* Auth Fields */}
+            {mode === "register" && (
+              <>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="firstName">First Name</label>
+                    <input
+                      id="firstName"
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="John"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="lastName">Last Name</label>
+                    <input
+                      id="lastName"
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Doe"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {isAuthMode && (
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
+            )}
+
+            {isAuthMode && (
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+            )}
+
+            {/* Task Fields */}
+            {mode === "newTask" && (
+              <>
+                <div className="form-group">
+                  <label htmlFor="taskTitle">Title</label>
+                  <input
+                    id="taskTitle"
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter task title..."
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="taskContent">Content</label>
+                  <textarea
+                    id="taskContent"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="Write your task..."
+                    rows={6}
+                    required
+                  />
+                </div>
+
+                <div className="form-group due-date-group">
+                  <label htmlFor="taskDueDate">Due Date</label>
+                  <input
+                    id="taskDueDate"
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            {error && <div className="form-modal-error">{error}</div>}
+
+            <button
+              type="submit"
+              className="form-modal-submit"
+              disabled={loading}
+            >
+              {loading
+                ? "Loading..."
+                : mode === "login"
+                  ? "Sign In"
+                  : mode === "register"
+                    ? "Create Account"
+                    : "Save Task"}
+            </button>
+          </form>
+
+          {isAuthMode && (
+            <div className="form-modal-footer">
+              <p>
+                {mode === "login"
+                  ? "Don't have an account? "
+                  : "Already have an account? "}
+                <Link
+                  to={mode === "login" ? "/register" : "/login"}
+                  className="form-modal-toggle"
+                >
+                  {mode === "login" ? "Register" : "Sign In"}
+                </Link>
+              </p>
+            </div>
+          )}
+        </Box>
+      </Box>
+    </Modal>
   );
 }

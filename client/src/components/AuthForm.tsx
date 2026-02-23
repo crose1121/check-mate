@@ -89,7 +89,7 @@ export default function AuthForm({
           <p className="auth-subtitle">
             {mode === "login"
               ? "Sign in to your account"
-              : "Join Task Buddy today"}
+              : "Join Check Mate Today"}
           </p>
         </div>
 

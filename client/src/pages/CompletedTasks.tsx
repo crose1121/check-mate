@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import Task from "../components/Task";
 import Modal from "../components/Modal";
+import { useAuth } from "../hooks/useAuth";
 import "./TasksPage.css";
 
 interface TaskType {
-  id: number;
+  id: string;
   title: string;
   content: string;
   created_at: string;
@@ -13,6 +14,7 @@ interface TaskType {
 }
 
 export default function CompletedTasks() {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +23,16 @@ export default function CompletedTasks() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch("http://localhost:4000/tasks/completed");
+        const userId = user?.id;
+        if (userId === "guest-user") {
+          setTasks([]);
+          return;
+        }
+
+        const endpoint = userId
+          ? `http://localhost:4000/tasks/completed?userId=${encodeURIComponent(userId)}`
+          : "http://localhost:4000/tasks/completed";
+        const response = await fetch(endpoint);
         if (!response.ok) throw new Error("Failed to fetch tasks");
         const data = await response.json();
         setTasks(data);
@@ -33,13 +44,13 @@ export default function CompletedTasks() {
     };
 
     fetchTasks();
-  }, []);
+  }, [user?.id]);
 
-  const handleTaskUncomplete = (id: number) => {
+  const handleTaskUncomplete = (id: string) => {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
-  const handleTaskDelete = (id: number) => {
+  const handleTaskDelete = (id: string) => {
     setTasks(tasks.filter((task) => task.id !== id));
   };
 
@@ -85,6 +96,8 @@ export default function CompletedTasks() {
         title={selectedTask?.title || ""}
         content={selectedTask?.content || ""}
         created_at={selectedTask?.created_at || ""}
+        updated_at={selectedTask?.updated_at}
+        is_completed={selectedTask?.is_completed}
       />
     </div>
   );

@@ -18,12 +18,31 @@
   max-width: 1280px;
   width: 100%;
   display: flex;
-  /* center everything by default. individual items like the right
-     section can be absolutely positioned if needed later */
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
   margin: 0 auto;
-  position: relative; /* allow child absolute positioning */
+  position: absolute;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-shrink: 0;
+  padding-left: 2rem;
+}
+
+.nav-left .logo {
+  flex-shrink: 0;
+}
+
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  /* display: flex; */
+  /* align-items: center;
+  justify-content: center; */
 }
 
 .logo {
@@ -34,7 +53,7 @@
 }
 
 .logo-with-sidenav {
-  margin-left: 110px; /* offset for 220px side nav width */
+  /* margin-left: 110px; offset for 220px side nav width */
 }
 
 .brand {
@@ -90,11 +109,9 @@
 }
 
 .nav-right {
-  /* if links are added in the future, keep them on the right edge */
-  position: absolute;
-  right: 2rem;
   display: flex;
-  gap: 6.5rem;
+  gap: 1.5rem;
+  padding-right: 2rem;
 }
 
 .nav-link {
@@ -143,4 +160,64 @@
 
 .nav-link:hover::after {
   width: 100%;
+}
+
+.restart-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2100;
+}
+
+.restart-modal-content {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  width: min(92vw, 430px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.3);
+}
+
+.restart-modal-content h3 {
+  margin: 0 0 0.7rem;
+  color: #1f2937;
+  font-size: 1.15rem;
+}
+
+.restart-modal-content p {
+  margin: 0;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.restart-modal-actions {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.restart-cancel-btn,
+.restart-reset-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.restart-cancel-btn {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.restart-reset-btn {
+  background: #dc2626;
+  color: #fff;
+}
+
+.restart-reset-btn:hover {
+  background: #b91c1c;
 }

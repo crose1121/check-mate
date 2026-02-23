@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import TaskGrid from "./TaskGrid";
 import Modal from "./Modal";
+import { useAuth } from "../hooks/useAuth";
 import "./PriorityList.css";
 
 interface TaskType {
-  id: number;
+  id: string;
   title: string;
   content: string;
   created_at: string;
+  due_date?: string | null;
   updated_at?: string;
   is_completed: boolean;
 }
@@ -17,12 +19,18 @@ const PRIORITY_STORAGE_KEY = "priorityOrder";
 const getUpdatedTime = (task: TaskType) =>
   new Date(task.updated_at ?? task.created_at).getTime();
 
-const getPriorityOrder = (): number[] => {
+const getPriorityOrder = (): string[] => {
   try {
     const stored = localStorage.getItem(PRIORITY_STORAGE_KEY);
     if (!stored) return [];
     const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed.filter(Number.isInteger) : [];
+    return Array.isArray(parsed)
+      ? parsed
+          .filter(
+            (value) => typeof value === "string" || typeof value === "number",
+          )
+          .map((value) => String(value))
+      : [];
   } catch {
     return [];
   }
@@ -33,7 +41,7 @@ const persistPriorityOrder = (orderedTasks: TaskType[]) => {
   localStorage.setItem(PRIORITY_STORAGE_KEY, JSON.stringify(order));
 };
 
-const sortByPriority = (tasks: TaskType[], order: number[]) => {
+const sortByPriority = (tasks: TaskType[], order: string[]) => {
   if (order.length === 0) {
     return [...tasks].sort((a, b) => getUpdatedTime(b) - getUpdatedTime(a));
   }
@@ -55,18 +63,28 @@ const sortByPriority = (tasks: TaskType[], order: number[]) => {
 };
 
 export default function PriorityList() {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
-  const [draggedId, setDraggedId] = useState<number | null>(null);
-  const [dragOverId, setDragOverId] = useState<number | null>(null);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [suppressActionsUntil, setSuppressActionsUntil] = useState(0);
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
-        const response = await fetch("http://localhost:4000/tasks/active");
+        const userId = user?.id;
+        if (userId === "guest-user") {
+          setTasks([]);
+          return;
+        }
+
+        const endpoint = userId
+          ? `http://localhost:4000/tasks/active?userId=${encodeURIComponent(userId)}`
+          : "http://localhost:4000/tasks/active";
+        const response = await fetch(endpoint);
         if (!response.ok) throw new Error("Failed to fetch tasks");
         const data = await response.json();
         const order = getPriorityOrder();
@@ -79,9 +97,9 @@ export default function PriorityList() {
     };
 
     fetchNotes();
-  }, []);
+  }, [user?.id]);
 
-  const handleDragStart = (e: React.DragEvent, noteId: number) => {
+  const handleDragStart = (e: React.DragEvent, noteId: string) => {
     setDraggedId(noteId);
     e.dataTransfer.effectAllowed = "move";
   };
@@ -91,7 +109,7 @@ export default function PriorityList() {
     e.dataTransfer.dropEffect = "move";
   };
 
-  const handleDrop = (e: React.DragEvent, targetId: number) => {
+  const handleDrop = (e: React.DragEvent, targetId: string) => {
     e.preventDefault();
     if (draggedId === null || draggedId === targetId) return;
 
@@ -117,7 +135,7 @@ export default function PriorityList() {
     setSuppressActionsUntil(Date.now() + 250);
   };
 
-  const handleDragEnter = (noteId: number) => {
+  const handleDragEnter = (noteId: string) => {
     setDragOverId(noteId);
   };
 
@@ -125,13 +143,13 @@ export default function PriorityList() {
     setDragOverId(null);
   };
 
-  const handleTaskComplete = (id: number) => {
+  const handleTaskComplete = (id: string) => {
     const nextTasks = tasks.filter((task) => task.id !== id);
     setTasks(nextTasks);
     persistPriorityOrder(nextTasks);
   };
 
-  const handleTaskDelete = (id: number) => {
+  const handleTaskDelete = (id: string) => {
     const nextTasks = tasks.filter((task) => task.id !== id);
     setTasks(nextTasks);
     persistPriorityOrder(nextTasks);
@@ -153,7 +171,9 @@ export default function PriorityList() {
   return (
     <>
       {tasks.length === 0 ? (
-        <p className="priority-empty">Create tasks before creating a priority list</p>
+        <p className="priority-empty">
+          Create tasks before creating a priority list
+        </p>
       ) : (
         <div className="priority-list">
           {tasks.map((task, index) => (
@@ -175,6 +195,7 @@ export default function PriorityList() {
                   title={task.title}
                   content={task.content}
                   created_at={task.created_at}
+                  due_date={task.due_date}
                   is_completed={task.is_completed}
                   isDragging={draggedId === task.id}
                   dragOverId={dragOverId}
@@ -201,6 +222,9 @@ export default function PriorityList() {
         title={selectedTask?.title || ""}
         content={selectedTask?.content || ""}
         created_at={selectedTask?.created_at || ""}
+        updated_at={selectedTask?.updated_at}
+        due_date={selectedTask?.due_date}
+        is_completed={selectedTask?.is_completed}
       />
     </>
   );
