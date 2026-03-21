@@ -1,3 +1,4 @@
+import { type ReactNode } from "react";
 import "./Modal.css";
 
 interface ModalProps {
@@ -11,6 +12,7 @@ interface ModalProps {
   due_date?: string | null;
   is_completed?: boolean;
   priorityIndex?: number;
+  children?: ReactNode;
 }
 
 export default function Modal({
@@ -24,8 +26,25 @@ export default function Modal({
   due_date,
   is_completed,
   priorityIndex,
+  children,
 }: ModalProps) {
   if (!isOpen) return null;
+
+  if (children) {
+    return (
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <button className="modal-close" onClick={onClose}>
+            ×
+          </button>
+          <div className="modal-main modal-custom">
+            <h2 className="modal-title">{title}</h2>
+            <div className="modal-custom-body">{children}</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const displayContent = content ?? body ?? "";
 

@@ -122,11 +122,6 @@ export default function AllTasks() {
 
       try {
         const userId = user?.id;
-        if (userId === "guest-user") {
-          setTasks([]);
-          return;
-        }
-
         const endpoint = userId
           ? `/tasks?userId=${encodeURIComponent(userId)}`
           : "/tasks";

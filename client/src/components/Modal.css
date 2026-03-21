@@ -89,6 +89,46 @@
   flex-direction: column;
 }
 
+.modal-custom {
+  gap: 1.25rem;
+}
+
+.modal-custom-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.modal-info-card {
+  background: linear-gradient(135deg, #0f172a, #111827);
+  color: #e5e7eb;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.modal-info-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.15rem;
+  color: #fef3c7;
+}
+
+.modal-info-card p,
+.modal-info-card ul {
+  margin: 0;
+  color: #cbd5e1;
+  line-height: 1.55;
+  font-size: 0.95rem;
+}
+
+.modal-info-card ul {
+  padding-left: 1.1rem;
+  margin-top: 0.4rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
 @keyframes slideUp {
   from {
     transform: translateY(40px);
@@ -129,6 +169,7 @@
   font-size: 1.8rem;
   font-weight: 700;
   line-height: 1.3;
+  padding-right: 3.5rem; /* keep title clear of the close button */
 }
 
 .modal-body {

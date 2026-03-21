@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { Box, Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import Modal from "../components/Modal";
 import AppTitle from "../components/AppTitle";
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const { setUser, setToken } = useAuth();
+  const [isLearnMoreOpen, setIsLearnMoreOpen] = useState(false);
 
   const cosmicButtonBaseSx = {
     py: "0.85rem",
@@ -42,16 +43,6 @@ export default function LandingPage() {
         "0 0 0 1px rgba(250,204,21,0.6), 0 0 16px rgba(250,204,21,0.55), 0 0 32px rgba(240,147,251,0.75), 0 0 54px rgba(102,126,234,0.65)",
     },
   } as const;
-
-  const handleContinueAsGuest = () => {
-    setUser({
-      id: "guest-user",
-      email: "guest@checkmate.local",
-      createdAt: new Date().toISOString(),
-    });
-    setToken("guest-session");
-    navigate("/tasks");
-  };
 
   return (
     <Box
@@ -133,20 +124,55 @@ export default function LandingPage() {
             width: "100%",
             display: "flex",
             justifyContent: "center",
+            mt: "0.35rem",
           }}
         >
-          <div
-            onClick={handleContinueAsGuest}
+          <button
+            type="button"
+            onClick={() => setIsLearnMoreOpen(true)}
             style={{
+              background: "none",
+              border: "none",
               color: "#f093fb",
               fontWeight: 700,
               cursor: "pointer",
+              textDecoration: "underline",
+              fontSize: "0.95rem",
             }}
           >
-            Continue as a guest
-          </div>
+            Learn More
+          </button>
         </Box>
       </Stack>
+
+      <Modal
+        isOpen={isLearnMoreOpen}
+        onClose={() => setIsLearnMoreOpen(false)}
+        title="Why teams choose Check Mate"
+      >
+        <div className="modal-info-card">
+          <h3>Plan with clarity</h3>
+          <p>
+            Map every task with priorities, due dates, and quick status cues so everyone knows what matters now.
+          </p>
+          <ul>
+            <li>Drag-and-drop priority lists</li>
+            <li>Calendar view for due dates</li>
+            <li>Filters for focus by status</li>
+          </ul>
+        </div>
+        <div className="modal-info-card">
+          <h3>Ship with confidence</h3>
+          <p>
+            Keep work moving with lightweight workflows—no clutter, just the essentials to get things done together.
+          </p>
+          <ul>
+            <li>Real-time task updates</li>
+            <li>Fast note-taking alongside tasks</li>
+            <li>Reminders that respect your time</li>
+          </ul>
+        </div>
+      </Modal>
     </Box>
   );
 }

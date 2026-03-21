@@ -24,11 +24,6 @@ export default function CompletedTasks() {
     const fetchTasks = async () => {
       try {
         const userId = user?.id;
-        if (userId === "guest-user") {
-          setTasks([]);
-          return;
-        }
-
         const endpoint = userId
           ? `http://localhost:4000/tasks/completed?userId=${encodeURIComponent(userId)}`
           : "http://localhost:4000/tasks/completed";

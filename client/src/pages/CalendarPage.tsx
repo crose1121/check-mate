@@ -77,7 +77,7 @@ export default function CalendarPage() {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      if (!user?.id || user.id === "guest-user") {
+      if (!user?.id) {
         setTasksByDate({});
         setError(null);
         return;
