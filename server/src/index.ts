@@ -13,6 +13,10 @@ app.use(express.json());
 app.use("/api/auth", auth);
 app.use("/tasks", tasks);
 
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
+
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.log(`API listening on http://localhost:${port}`);
