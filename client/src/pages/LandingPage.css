@@ -1,80 +1,87 @@
-.landing {
-  min-height: calc(100vh - 64px);
-  /* padding: 4rem 2rem; */
+.landing-page {
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* padding: 2rem; */
+  padding: 3rem 1.5rem;
 }
 
-.welcome-mat {
+.landing-page__content {
   width: 100%;
   max-width: 920px;
-  min-height: 420px;
-  padding: 4.5rem;
-  border: 1px solid #333;
-  border-radius: 12px;
-  background: #111;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 0.75rem;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
 }
 
-.welcome-title {
+.landing-page__subtitle {
   margin: 0;
-  color: #e0e0e0;
+  max-width: 28rem;
+  color: #f3f4f6;
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
-.welcome-subtitle {
-  margin: 0.75rem 0 1.5rem;
-  color: #b0b0b0;
-  font-size: 0.95rem;
+.landing-page__actions {
+  width: min(100%, 36rem);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
 }
 
-.welcome-btn {
-  width: 100%;
+.landing-page__button {
   padding: 0.85rem 1rem;
   border-radius: 10px;
-  border: 1px solid #3b3b3b;
-  background: #1a1a1a;
-  color: #d6d6d6;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, #764ba2 0%, #f093fb 55%, #f5576c 100%);
+  color: #111;
   font-size: 0.95rem;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  box-shadow: none;
 }
 
-.welcome-btn:hover {
-  border-color: #667eea;
-  color: #0e0e0e;
+.landing-page__button:hover {
+  border-color: #facc15;
+  background: linear-gradient(135deg, #6c4498 0%, #e884f2 55%, #e94f63 100%);
+  color: #111;
+  font-weight: 800;
+  box-shadow:
+    0 0 0 1px rgba(250, 204, 21, 0.6),
+    0 0 16px rgba(250, 204, 21, 0.55),
+    0 0 32px rgba(240, 147, 251, 0.75),
+    0 0 54px rgba(102, 126, 234, 0.65);
 }
 
-.welcome-btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: transparent;
-  color: #fff;
-}
-
-.welcome-btn-primary:hover {
-  border-color: transparent;
-}
-
-.welcome-btn-secondary {
-  background: #111;
-}
-
-.welcome-btn-tertiary {
+.landing-page__learn-more {
+  padding: 0;
+  border: none;
   background: transparent;
+  color: #f093fb;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: underline;
+  box-shadow: none;
+}
+
+.landing-page__learn-more:hover {
+  transform: none;
+  box-shadow: none;
+  color: #f9b6fd;
 }
 
 @media (max-width: 600px) {
-  .welcome-mat {
-    padding: 1.75rem;
-    min-height: 320px;
+  .landing-page {
+    padding: 2rem 1rem;
+  }
+
+  .landing-page__subtitle {
+    font-size: 1.5rem;
+  }
+
+  .landing-page__actions {
+    grid-template-columns: 1fr;
   }
 }

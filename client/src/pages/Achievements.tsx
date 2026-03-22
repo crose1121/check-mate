@@ -116,67 +116,67 @@ export default function Achievements() {
         <h2>Achievements</h2>
       </div>
 
-      <div className="achievements-card">
-        <h3>{currentTierName}</h3>
-        {celebratingTierName && (
-          <div
-            className={`tier-unlock-banner ${celebrationDirection === "demotion" ? "tier-unlock-banner-demotion" : ""}`}
-          >
-            {celebrationDirection === "demotion" ? "↘" : "✨"}{" "}
-            {celebrationDirection === "demotion"
-              ? `${celebratingTierName} Tier Changed`
-              : `${celebratingTierName} Unlocked!`}
-          </div>
-        )}
-        <div className="trophy-scroll" role="region" aria-label="Trophy tiers">
-          <div className="trophy-track">
-            {ACHIEVEMENT_TIERS.map((tier) => {
-              const isUnlocked =
-                ACHIEVEMENT_TIERS.indexOf(tier) <= unlockedTierIndex;
-
-              return (
-                <div
-                  className={`trophy-item ${celebratingTierName === tier.name ? "trophy-item-unlock" : ""}`}
-                  key={tier.name}
-                >
-                  {isUnlocked && (
-                    <span
-                      className="trophy-complete-badge"
-                      data-tooltip="Completed"
-                      title="Completed"
-                      aria-label="Completed"
-                    >
-                      ✓
-                    </span>
-                  )}
-                  {!isUnlocked && (
-                    <span
-                      className="trophy-lock-badge"
-                      data-tooltip="Locked"
-                      title="Locked"
-                      aria-label="Locked"
-                    >
-                      🔒
-                    </span>
-                  )}
-                  <p className="trophy-item-title">{tier.name}</p>
-                  <div className="trophy-lock-wrapper">
-                    <div className={isUnlocked ? "" : "trophy-locked"}>
-                      <Trophy tier={tier.tier} size={96} />
-                    </div>
-                  </div>
-                  <p className="trophy-unlock-text">
-                    {isUnlocked
-                      ? "Unlocked"
-                      : `Locked - complete ${tier.requiredTasks} tasks to unlock`}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+      {/* <div className="achievements-card"> */}
+      <h3>{currentTierName}</h3>
+      {celebratingTierName && (
+        <div
+          className={`tier-unlock-banner ${celebrationDirection === "demotion" ? "tier-unlock-banner-demotion" : ""}`}
+        >
+          {celebrationDirection === "demotion" ? "↘" : "✨"}{" "}
+          {celebrationDirection === "demotion"
+            ? `${celebratingTierName} Tier Changed`
+            : `${celebratingTierName} Unlocked!`}
         </div>
-        <p>Completed tasks: {completedTasks}</p>
+      )}
+      <div className="trophy-scroll" role="region" aria-label="Trophy tiers">
+        <div className="trophy-track">
+          {ACHIEVEMENT_TIERS.map((tier) => {
+            const isUnlocked =
+              ACHIEVEMENT_TIERS.indexOf(tier) <= unlockedTierIndex;
+
+            return (
+              <div
+                className={`trophy-item ${celebratingTierName === tier.name ? "trophy-item-unlock" : ""}`}
+                key={tier.name}
+              >
+                {isUnlocked && (
+                  <span
+                    className="trophy-complete-badge"
+                    data-tooltip="Completed"
+                    title="Completed"
+                    aria-label="Completed"
+                  >
+                    ✓
+                  </span>
+                )}
+                {!isUnlocked && (
+                  <span
+                    className="trophy-lock-badge"
+                    data-tooltip="Locked"
+                    title="Locked"
+                    aria-label="Locked"
+                  >
+                    🔒
+                  </span>
+                )}
+                <p className="trophy-item-title">{tier.name}</p>
+                <div className="trophy-lock-wrapper">
+                  <div className={isUnlocked ? "" : "trophy-locked"}>
+                    <Trophy tier={tier.tier} size={96} />
+                  </div>
+                </div>
+                <p className="trophy-unlock-text">
+                  {isUnlocked
+                    ? "Unlocked"
+                    : `Locked - complete ${tier.requiredTasks} tasks to unlock`}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </div>
+      <p>Completed tasks: {completedTasks}</p>
+      {/* </div> */}
     </div>
   );
 }

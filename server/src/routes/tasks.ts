@@ -97,6 +97,17 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: "invalid user id" });
   }
 
+  // Validate due date is not in the past
+  if (due_date) {
+    const dueDate = new Date(due_date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (dueDate < today) {
+      return res.status(400).json({ error: "due date cannot be in the past" });
+    }
+  }
+
   try {
     const taskId = uuidv4();
     const result = await pool.query(
