@@ -350,7 +350,20 @@ export default function FormModal({ isOpen, onClose, mode }: FormModalProps) {
                   id="taskDueDate"
                   type="date"
                   value={dueDate}
-                  onChange={(e) => { setDueDate(e.target.value); clearFieldError("dueDate"); }}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setDueDate(val);
+                    if (val) {
+                      const selected = new Date(val + "T00:00:00");
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      if (selected < today) {
+                        setFieldErrors((prev) => ({ ...prev, dueDate: "Due date cannot be in the past" }));
+                        return;
+                      }
+                    }
+                    clearFieldError("dueDate");
+                  }}
                   min={todayLocal}
                   className={fieldErrors.dueDate ? "input-error" : ""}
                 />
