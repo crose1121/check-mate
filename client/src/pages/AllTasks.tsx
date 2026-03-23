@@ -6,20 +6,12 @@ import FilterMenu from "../components/FilterMenu";
 import ViewMenu from "../components/ViewMenu";
 import Modal from "../components/Modal";
 import { apiCall } from "../lib/api";
+import { getPriorityOrder, setPriorityOrder } from "../lib/priorityUtils";
 import { useAuth } from "../hooks/useAuth";
+import type { Task as TaskType } from "../types";
 import "./AllTasks.css";
 
 type SortType = "priority" | "oldest" | "newest" | "active" | "complete";
-
-interface TaskType {
-  id: string;
-  title: string;
-  content: string;
-  created_at: string;
-  due_date?: string | null;
-  updated_at?: string;
-  is_completed: boolean;
-}
 
 export default function AllTasks() {
   const { user } = useAuth();
@@ -39,39 +31,21 @@ export default function AllTasks() {
   const getUpdatedTime = (task: TaskType) =>
     new Date(task.updated_at ?? task.created_at).getTime();
 
-  const getPriorityOrder = (): string[] => {
-    try {
-      const stored = localStorage.getItem("priorityOrder");
-      if (!stored) return [];
-      const parsed = JSON.parse(stored);
-      return Array.isArray(parsed)
-        ? parsed
-            .filter(
-              (value) => typeof value === "string" || typeof value === "number",
-            )
-            .map((value) => String(value))
-        : [];
-    } catch {
-      return [];
-    }
-  };
-
   const syncPriorityOrder = (taskList: TaskType[]) => {
     try {
       const existing = getPriorityOrder();
-      const ids = taskList.filter((task) => !task.is_completed).map((task) => task.id);
+      const ids = taskList
+        .filter((task) => !task.is_completed)
+        .map((task) => task.id);
       const preserved = existing.filter((id) => ids.includes(id));
       const missing = ids.filter((id) => !preserved.includes(id));
       const nextOrder = [...preserved, ...missing];
-      localStorage.setItem("priorityOrder", JSON.stringify(nextOrder));
+      setPriorityOrder(nextOrder);
       return nextOrder;
     } catch {
       return [];
     }
   };
-
-  const sortByRecent = (taskList: TaskType[]) =>
-    [...taskList].sort((a, b) => getUpdatedTime(b) - getUpdatedTime(a));
 
   const sortByOldest = (taskList: TaskType[]) =>
     [...taskList].sort((a, b) => getUpdatedTime(a) - getUpdatedTime(b));
@@ -201,7 +175,7 @@ export default function AllTasks() {
       case "complete":
         return sortByCompleted(taskList);
       default:
-        return sortByRecent(taskList);
+        return sortByNewest(taskList);
     }
   };
 
@@ -214,16 +188,13 @@ export default function AllTasks() {
   const noTasksToDisplay = sortedTasks.length === 0;
   const hasAnyTasks = tasks.length > 0;
 
+  const priorityOrder = getPriorityOrder();
+
   const selectedPriorityIndex = (() => {
     if (!selectedTask) return undefined;
-    const order = getPriorityOrder();
-    const pos = order.indexOf(selectedTask.id);
+    const pos = priorityOrder.indexOf(selectedTask.id);
     return pos !== -1 ? pos + 1 : undefined;
   })();
-
-  const handleViewModeChange = (mode: "grid" | "list") => {
-    setViewMode(mode);
-  };
 
   const handleTasksPerPageChange = (count: number) => {
     setTasksPerPage(count);
@@ -242,13 +213,12 @@ export default function AllTasks() {
     <div className="all-tasks-container">
       <div className="all-tasks-header">
         <div className="page-heading">
-          <p className="page-heading-subtitle">Tasks</p>
-          <h2 className="page-heading-title">All Tasks</h2>
+          <h2 className="page-heading-title">Tasks</h2>
         </div>
         <div className="all-tasks-actions">
           <ViewMenu
             viewMode={viewMode}
-            onViewModeChange={handleViewModeChange}
+            onViewModeChange={setViewMode}
             tasksPerPage={tasksPerPage}
             onTasksPerPageChange={handleTasksPerPageChange}
           />
@@ -275,7 +245,6 @@ export default function AllTasks() {
             className={`tasks-grid-layout ${viewMode === "list" ? "list-view" : ""}`}
           >
             {paginatedTasks.map((task) => {
-              const priorityOrder = getPriorityOrder();
               const priorityPosition = priorityOrder.indexOf(task.id);
               const priorityIndex =
                 priorityPosition !== -1 ? priorityPosition + 1 : undefined;

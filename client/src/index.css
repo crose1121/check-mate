@@ -1,3 +1,8 @@
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
 :root {
   font-family:
     "Segoe UI",
@@ -28,9 +33,9 @@ a:hover {
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
   background: #0e0e0e;
-  scrollbar-gutter: stable;
 }
 
 h1 {
@@ -48,13 +53,26 @@ button {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: none; /* no glow until hover */
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+  box-shadow: none;
 }
+
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 3px 7px rgba(240, 147, 251, 0.55);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
+
+button:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 1px 3px rgba(102, 126, 234, 0.2);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;

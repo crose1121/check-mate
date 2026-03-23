@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { useClickOutside } from "../hooks/useClickOutside";
 import "./ViewMenu.css";
 
 interface ViewMenuProps {
@@ -17,17 +18,7 @@ export default function ViewMenu({
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState(tasksPerPage.toString());
   const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useClickOutside(menuRef, () => setIsOpen(false));
 
   const handleTasksPerPageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);

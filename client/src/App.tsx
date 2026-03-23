@@ -13,7 +13,6 @@ import FormModal from "./components/FormModal";
 import LandingPage from "./pages/LandingPage";
 import AllTasks from "./pages/AllTasks";
 import PriorityListPage from "./pages/PriorityListPage";
-import CompletedTasks from "./pages/CompletedTasks";
 import Achievements from "./pages/Achievements";
 import CalendarPage from "./pages/CalendarPage";
 import "./App.css";
@@ -68,7 +67,6 @@ export default function App() {
           <Route path="/all" element={<AllTasks />} />
           <Route path="/priority" element={<PriorityListPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/completed" element={<CompletedTasks />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/new" element={<AllTasks />} />
           <Route path="*" element={<Navigate to="/tasks" replace />} />

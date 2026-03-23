@@ -2,16 +2,9 @@ import { useEffect, useState } from "react";
 import Task from "../components/Task";
 import Modal from "../components/Modal";
 import { useAuth } from "../hooks/useAuth";
+import { apiCall } from "../lib/api";
+import type { Task as TaskType } from "../types";
 import "./TasksPage.css";
-
-interface TaskType {
-  id: string;
-  title: string;
-  content: string;
-  created_at: string;
-  updated_at?: string;
-  is_completed: boolean;
-}
 
 export default function CompletedTasks() {
   const { user } = useAuth();
@@ -25,9 +18,9 @@ export default function CompletedTasks() {
       try {
         const userId = user?.id;
         const endpoint = userId
-          ? `http://localhost:4000/tasks/completed?userId=${encodeURIComponent(userId)}`
-          : "http://localhost:4000/tasks/completed";
-        const response = await fetch(endpoint);
+          ? `/tasks/completed?userId=${encodeURIComponent(userId)}`
+          : "/tasks/completed";
+        const response = await apiCall(endpoint);
         if (!response.ok) throw new Error("Failed to fetch tasks");
         const data = await response.json();
         setTasks(data);

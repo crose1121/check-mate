@@ -1,5 +1,5 @@
 .landing-page {
-  min-height: 100vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -41,18 +41,32 @@
   font-size: 0.95rem;
   font-weight: 600;
   box-shadow: none;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .landing-page__button:hover {
   border-color: #facc15;
-  background: linear-gradient(135deg, #6c4498 0%, #e884f2 55%, #e94f63 100%);
+  background: linear-gradient(135deg, #764ba2 0%, #f093fb 55%, #f5576c 100%);
   color: #111;
-  font-weight: 800;
+  transform: translateY(-3px) scale(1.02);
   box-shadow:
     0 0 0 1px rgba(250, 204, 21, 0.6),
     0 0 16px rgba(250, 204, 21, 0.55),
     0 0 32px rgba(240, 147, 251, 0.75),
     0 0 54px rgba(102, 126, 234, 0.65);
+}
+
+.landing-page__button:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow:
+    0 0 0 1px rgba(250, 204, 21, 0.4),
+    0 0 8px rgba(250, 204, 21, 0.3);
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
 }
 
 .landing-page__learn-more {
@@ -70,6 +84,12 @@
   transform: none;
   box-shadow: none;
   color: #f9b6fd;
+}
+
+.landing-page__learn-more:active {
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
 }
 
 @media (max-width: 600px) {

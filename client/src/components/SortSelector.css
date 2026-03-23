@@ -25,6 +25,11 @@
   color: #fff;
 }
 
+.sort-selector-toggle:active {
+  transform: scale(0.96);
+  box-shadow: none;
+}
+
 .sort-selector-arrow {
   transition: transform 0.2s ease;
 }

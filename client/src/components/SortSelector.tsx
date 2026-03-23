@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { useClickOutside } from "../hooks/useClickOutside";
 import "./SortSelector.css";
 
 type SortType = "priority" | "oldest" | "newest" | "active" | "complete";
@@ -14,17 +15,7 @@ export default function SortSelector({
 }: SortSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  useClickOutside(menuRef, () => setIsOpen(false));
 
   const handleSortSelect = (sort: SortType) => {
     onSortChange(sort);

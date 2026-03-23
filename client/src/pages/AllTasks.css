@@ -3,7 +3,6 @@
   max-width: 1100px;
   margin: 0 auto;
   background: #1a1a1a;
-  min-height: 100vh;
 }
 
 .all-tasks-header {
@@ -71,20 +70,11 @@
 }
 
 .tasks-grid-layout::-webkit-scrollbar {
-  width: 8px;
+  display: none;
 }
 
-.tasks-grid-layout::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.tasks-grid-layout::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 4px;
-}
-
-.tasks-grid-layout::-webkit-scrollbar-thumb:hover {
-  background: #777;
+.tasks-grid-layout {
+  scrollbar-width: none;
 }
 
 .all-tasks-container p {

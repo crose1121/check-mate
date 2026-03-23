@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { apiCall } from "../lib/api";
 
 interface TaskProps {
   id: string;
@@ -64,10 +65,7 @@ export default function Task({
       const scopedEndpoint = userId
         ? `${endpoint}?userId=${encodeURIComponent(userId)}`
         : endpoint;
-      const response = await fetch(`http://localhost:4000${scopedEndpoint}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await apiCall(scopedEndpoint, { method: "PUT" });
 
       if (!response.ok) throw new Error("Failed to update task");
 
@@ -94,10 +92,7 @@ export default function Task({
       const endpoint = userId
         ? `/tasks/${id}?userId=${encodeURIComponent(userId)}`
         : `/tasks/${id}`;
-      const response = await fetch(`http://localhost:4000${endpoint}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await apiCall(endpoint, { method: "DELETE" });
 
       if (!response.ok) throw new Error("Failed to delete task");
 
@@ -115,36 +110,47 @@ export default function Task({
       onClick={handleCardClick}
       style={{ cursor: "pointer" }}
     >
-      <button
-        className="task-delete-btn"
-        onClick={handleDelete}
-        title="Delete task"
-      >
-        ✕
-      </button>
-      <button
-        className="complete-btn"
-        onClick={handleMarkComplete}
-        title={is_completed ? "Mark as incomplete" : "Mark as complete"}
-      >
-        ✓
-      </button>
-      <h3>{title}</h3>
+      {/* ── Header: title · actions ── */}
+      <div className="task-card-header">
+        <h3 className="task-card-title">{title}</h3>
+        <div className="task-card-actions">
+          <button
+            className={`complete-btn ${is_completed ? "is-complete" : ""}`}
+            onClick={handleMarkComplete}
+            title={is_completed ? "Mark as incomplete" : "Mark as complete"}
+          >
+            ✓
+          </button>
+          <button
+            className="task-delete-btn"
+            onClick={handleDelete}
+            title="Delete task"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      {/* ── Body ── */}
       <p>{abbreviateBody(content)}</p>
-      {is_completed ? (
-        <>
-          <small style={{ color: "#4caf50", fontWeight: 600 }}>
-            Task Completed
-          </small>
-          {updated_at && (
-            <small className="completed-text">
-              on {new Date(updated_at).toLocaleDateString()}
+
+      {/* ── Footer ── */}
+      <div className="task-card-footer">
+        {is_completed ? (
+          <>
+            <small style={{ color: "#4caf50", fontWeight: 600 }}>
+              Task Completed
             </small>
-          )}
-        </>
-      ) : (
-        <small>{date}</small>
-      )}
+            {updated_at && (
+              <small className="completed-text">
+                on {new Date(updated_at).toLocaleDateString()}
+              </small>
+            )}
+          </>
+        ) : (
+          <small>{date}</small>
+        )}
+      </div>
     </div>
   );
 }

@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import Modal from "../components/Modal";
 import { useAuth } from "../hooks/useAuth";
 import { apiCall } from "../lib/api";
+import { getPriorityOrder } from "../lib/priorityUtils";
+import type { Task as BaseTask } from "../types";
 import "./CalendarPage.css";
 
 const monthNames = [
@@ -21,18 +23,8 @@ const monthNames = [
 
 const weekdayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-type Task = {
-  id: string;
-  title: string;
-  content: string;
-  created_at: string;
-  updated_at?: string;
-  due_date?: string | null;
-  is_completed: boolean;
-  priorityIndex?: number;
-};
+type Task = BaseTask & { priorityIndex?: number };
 
-const PRIORITY_STORAGE_KEY = "priorityOrder";
 const PRIORITY_COLORS = [
   "#ff6b6b",
   "#ffa24c",
@@ -41,23 +33,6 @@ const PRIORITY_COLORS = [
   "#9b8cff",
   "#b7c4ff",
 ];
-
-const getPriorityOrder = (): string[] => {
-  try {
-    const stored = localStorage.getItem(PRIORITY_STORAGE_KEY);
-    if (!stored) return [];
-    const parsed = JSON.parse(stored);
-    return Array.isArray(parsed)
-      ? parsed
-          .filter(
-            (value) => typeof value === "string" || typeof value === "number",
-          )
-          .map((value) => String(value))
-      : [];
-  } catch {
-    return [];
-  }
-};
 
 const getPriorityIndex = (orderMap: Map<string, number>, taskId: string) => {
   const position = orderMap.get(taskId);
@@ -194,7 +169,6 @@ export default function CalendarPage() {
     <div className="calendar-page">
       <div className="calendar-header">
         <div className="page-heading">
-          <p className="page-heading-subtitle">Planning</p>
           <h2 className="page-heading-title">Calendar</h2>
         </div>
         <div className="calendar-controls">

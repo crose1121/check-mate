@@ -9,6 +9,11 @@
   padding: 1.5rem 0;
   z-index: 999;
   overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.side-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .side-nav-new-note {

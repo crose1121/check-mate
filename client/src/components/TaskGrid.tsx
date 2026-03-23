@@ -1,5 +1,6 @@
 import "./TaskGrid.css";
 import { useAuth } from "../hooks/useAuth";
+import { apiCall } from "../lib/api";
 
 interface TaskGridProps {
   id: string;
@@ -68,10 +69,7 @@ export default function TaskGrid({
       const scopedEndpoint = userId
         ? `${endpoint}?userId=${encodeURIComponent(userId)}`
         : endpoint;
-      const response = await fetch(`http://localhost:4000${scopedEndpoint}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await apiCall(scopedEndpoint, { method: "PUT" });
 
       if (!response.ok) throw new Error("Failed to update task");
 
@@ -95,10 +93,7 @@ export default function TaskGrid({
       const endpoint = userId
         ? `/tasks/${id}?userId=${encodeURIComponent(userId)}`
         : `/tasks/${id}`;
-      const response = await fetch(`http://localhost:4000${endpoint}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await apiCall(endpoint, { method: "DELETE" });
 
       if (!response.ok) {
         console.error(`Delete failed with status ${response.status}`);
@@ -133,49 +128,59 @@ export default function TaskGrid({
         })
       }
     >
-      {priorityIndex && (
-        <div
-          className={`task-grid-priority priority-${Math.min(priorityIndex, 6)}`}
-        >
-          {priorityIndex}
-        </div>
-      )}
-      <button
-        className="task-grid-delete"
-        onClick={handleDelete}
-        title="Delete task"
-      >
-        ✕
-      </button>
-      {showCheckmark && (
-        <button
-          className="task-grid-checkmark"
-          onClick={handleMarkComplete}
-          title={is_completed ? "Mark as incomplete" : "Mark as complete"}
-        >
-          ✓
-        </button>
-      )}
-      <h4>{truncateText(title, 40)}</h4>
-      <p>{truncateText(content, 85)}</p>
-      {is_completed ? (
-        <>
-          <small style={{ color: "#4caf50", fontWeight: 600 }}>
-            Task Completed
-          </small>
-          {updated_at && (
-            <small className="completed-text">
-              on {new Date(updated_at).toLocaleDateString()}
-            </small>
+      {/* ── Header: priority · title · actions ── */}
+      <div className="task-grid-header">
+        {priorityIndex && (
+          <div
+            className={`task-grid-priority priority-${Math.min(priorityIndex, 6)}`}
+          >
+            {priorityIndex}
+          </div>
+        )}
+        <h4 className="task-grid-title">{truncateText(title, 50)}</h4>
+        <div className="task-grid-actions">
+          {showCheckmark && (
+            <button
+              className={`task-grid-checkmark ${is_completed ? "is-complete" : ""}`}
+              onClick={handleMarkComplete}
+              title={is_completed ? "Mark as incomplete" : "Mark as complete"}
+            >
+              ✓
+            </button>
           )}
-        </>
-      ) : (
-        <small>
-          {due_date
-            ? `Due ${new Date(due_date).toLocaleDateString()}`
-            : new Date(created_at).toLocaleDateString()}
-        </small>
-      )}
+          <button
+            className="task-grid-delete"
+            onClick={handleDelete}
+            title="Delete task"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      {/* ── Body ── */}
+      <p>{truncateText(content, 90)}</p>
+
+      {/* ── Footer: date ── */}
+      <div className="task-grid-footer">
+        {is_completed ? (
+          <>
+            <small className="task-grid-completed-label">Task Completed</small>
+            {updated_at && (
+              <small className="completed-text">
+                on {new Date(updated_at).toLocaleDateString()}
+              </small>
+            )}
+          </>
+        ) : (
+          <small>
+            {due_date
+              ? `Due ${new Date(due_date).toLocaleDateString()}`
+              : new Date(created_at).toLocaleDateString()}
+          </small>
+        )}
+      </div>
+
       {dragOverId === id && isDraggable && (
         <div className="drop-indicator">↓ Drop here</div>
       )}

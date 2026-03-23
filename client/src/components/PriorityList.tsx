@@ -1,66 +1,37 @@
 import { useEffect, useState } from "react";
-import TaskGrid from "./TaskGrid";
 import Modal from "./Modal";
 import { useAuth } from "../hooks/useAuth";
+import { apiCall } from "../lib/api";
+import { getPriorityOrder, setPriorityOrder } from "../lib/priorityUtils";
+import type { Task as TaskType } from "../types";
 import "./PriorityList.css";
-
-interface TaskType {
-  id: string;
-  title: string;
-  content: string;
-  created_at: string;
-  due_date?: string | null;
-  updated_at?: string;
-  is_completed: boolean;
-}
-
-const PRIORITY_STORAGE_KEY = "priorityOrder";
 
 const getUpdatedTime = (task: TaskType) =>
   new Date(task.updated_at ?? task.created_at).getTime();
 
-const getPriorityOrder = (): string[] => {
-  try {
-    const stored = localStorage.getItem(PRIORITY_STORAGE_KEY);
-    if (!stored) return [];
-    const parsed = JSON.parse(stored);
-    return Array.isArray(parsed)
-      ? parsed
-          .filter(
-            (value) => typeof value === "string" || typeof value === "number",
-          )
-          .map((value) => String(value))
-      : [];
-  } catch {
-    return [];
-  }
-};
-
 const persistPriorityOrder = (orderedTasks: TaskType[]) => {
-  const order = orderedTasks.map((task) => task.id);
-  localStorage.setItem(PRIORITY_STORAGE_KEY, JSON.stringify(order));
+  setPriorityOrder(orderedTasks.map((task) => task.id));
 };
 
 const sortByPriority = (tasks: TaskType[], order: string[]) => {
   if (order.length === 0) {
     return [...tasks].sort((a, b) => getUpdatedTime(b) - getUpdatedTime(a));
   }
-
   const orderMap = new Map(order.map((id, index) => [id, index]));
-
   return [...tasks].sort((a, b) => {
     const aIndex = orderMap.get(a.id);
     const bIndex = orderMap.get(b.id);
-
     if (aIndex !== undefined || bIndex !== undefined) {
       if (aIndex === undefined) return 1;
       if (bIndex === undefined) return -1;
       return aIndex - bIndex;
     }
-
     return getUpdatedTime(b) - getUpdatedTime(a);
   });
 };
+
+const truncate = (text: string, max: number) =>
+  text.length > max ? text.substring(0, max) + "…" : text;
 
 export default function PriorityList() {
   const { user } = useAuth();
@@ -70,16 +41,15 @@ export default function PriorityList() {
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
-  const [suppressActionsUntil, setSuppressActionsUntil] = useState(0);
 
   useEffect(() => {
-    const fetchNotes = async () => {
+    const fetchTasks = async () => {
       try {
         const userId = user?.id;
         const endpoint = userId
-          ? `http://localhost:4000/tasks/active?userId=${encodeURIComponent(userId)}`
-          : "http://localhost:4000/tasks/active";
-        const response = await fetch(endpoint);
+          ? `/tasks/active?userId=${encodeURIComponent(userId)}`
+          : "/tasks/active";
+        const response = await apiCall(endpoint);
         if (!response.ok) throw new Error("Failed to fetch tasks");
         const data = await response.json();
         const order = getPriorityOrder();
@@ -90,12 +60,12 @@ export default function PriorityList() {
         setLoading(false);
       }
     };
-
-    fetchNotes();
+    fetchTasks();
   }, [user?.id]);
 
-  const handleDragStart = (e: React.DragEvent, noteId: string) => {
-    setDraggedId(noteId);
+  // ── Drag handlers ───────────────────────────────────────
+  const handleDragStart = (e: React.DragEvent, taskId: string) => {
+    setDraggedId(taskId);
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -108,108 +78,153 @@ export default function PriorityList() {
     e.preventDefault();
     if (draggedId === null || draggedId === targetId) return;
 
-    const draggedIndex = tasks.findIndex((task) => task.id === draggedId);
-    const targetIndex = tasks.findIndex((task) => task.id === targetId);
-
+    const draggedIndex = tasks.findIndex((t) => t.id === draggedId);
+    const targetIndex = tasks.findIndex((t) => t.id === targetId);
     if (draggedIndex === -1 || targetIndex === -1) return;
 
-    const newTasks = [...tasks];
-    const [draggedTask] = newTasks.splice(draggedIndex, 1);
-    newTasks.splice(targetIndex, 0, draggedTask);
+    const next = [...tasks];
+    const [moved] = next.splice(draggedIndex, 1);
+    next.splice(targetIndex, 0, moved);
 
-    setTasks(newTasks);
-    persistPriorityOrder(newTasks);
+    setTasks(next);
+    persistPriorityOrder(next);
     setDraggedId(null);
     setDragOverId(null);
-    setSuppressActionsUntil(Date.now() + 250);
   };
 
   const handleDragEnd = () => {
     setDraggedId(null);
     setDragOverId(null);
-    setSuppressActionsUntil(Date.now() + 250);
   };
 
-  const handleDragEnter = (noteId: string) => {
-    setDragOverId(noteId);
+  // ── Task actions ────────────────────────────────────────
+  const handleComplete = async (e: React.MouseEvent, taskId: string) => {
+    e.stopPropagation();
+    try {
+      const userId = user?.id;
+      const endpoint = userId
+        ? `/tasks/${taskId}/complete?userId=${encodeURIComponent(userId)}`
+        : `/tasks/${taskId}/complete`;
+      const response = await apiCall(endpoint, { method: "PUT" });
+      if (!response.ok) throw new Error("Failed to complete task");
+      const next = tasks.filter((t) => t.id !== taskId);
+      setTasks(next);
+      persistPriorityOrder(next);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDragLeave = () => {
-    setDragOverId(null);
+  const handleDelete = async (e: React.MouseEvent, taskId: string) => {
+    e.stopPropagation();
+    try {
+      const userId = user?.id;
+      const endpoint = userId
+        ? `/tasks/${taskId}?userId=${encodeURIComponent(userId)}`
+        : `/tasks/${taskId}`;
+      const response = await apiCall(endpoint, { method: "DELETE" });
+      if (!response.ok) throw new Error("Failed to delete task");
+      const next = tasks.filter((t) => t.id !== taskId);
+      setTasks(next);
+      persistPriorityOrder(next);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleTaskComplete = (id: string) => {
-    const nextTasks = tasks.filter((task) => task.id !== id);
-    setTasks(nextTasks);
-    persistPriorityOrder(nextTasks);
-  };
-
-  const handleTaskDelete = (id: string) => {
-    const nextTasks = tasks.filter((task) => task.id !== id);
-    setTasks(nextTasks);
-    persistPriorityOrder(nextTasks);
-  };
-
+  // ── Render ──────────────────────────────────────────────
   if (loading)
-    return (
-      <div className="priority-state">
-        <p>Loading...</p>
-      </div>
-    );
+    return <p className="priority-state">Loading…</p>;
   if (error)
+    return <p className="priority-state">Error: {error}</p>;
+  if (tasks.length === 0)
     return (
-      <div className="priority-state">
-        <p>Error: {error}</p>
-      </div>
+      <p className="priority-empty">
+        No active tasks yet — create some to start building your priority list.
+      </p>
     );
 
   return (
     <>
-      {tasks.length === 0 ? (
-        <p className="priority-empty">
-          Create tasks before creating a priority list
-        </p>
-      ) : (
-        <div className="priority-list">
-          {tasks.map((task, index) => (
-            <div
+      <ol className="priority-list">
+        {tasks.map((task, index) => {
+          const isTop = index === 0;
+          const isDragging = draggedId === task.id;
+          const isOver = dragOverId === task.id;
+          const dueDate = task.due_date
+            ? new Date(task.due_date).toLocaleDateString()
+            : null;
+          const isOverdue =
+            task.due_date && new Date(task.due_date) < new Date();
+
+          return (
+            <li
               key={task.id}
-              className="priority-item"
-              onDragEnter={() => handleDragEnter(task.id)}
-              onDragLeave={handleDragLeave}
+              className={`priority-row${isTop ? " priority-row--top" : ""}${isDragging ? " priority-row--dragging" : ""}${isOver ? " priority-row--over" : ""}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, task.id)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, task.id)}
+              onDragEnd={handleDragEnd}
+              onDragEnter={() => setDragOverId(task.id)}
+              onDragLeave={() => setDragOverId(null)}
+              onClick={() => setSelectedTask(task)}
             >
-              <div className={`priority-rank ${index === 0 ? "top" : ""}`}>
-                <span className="priority-number">{index + 1}</span>
-                <span className="priority-label">
-                  {index === 0 ? "Top" : `Priority ${index + 1}`}
+              {/* Drag handle */}
+              <span className="priority-row__handle" title="Drag to reorder">
+                ⠿
+              </span>
+
+              {/* Rank badge */}
+              <span className={`priority-row__rank${isTop ? " priority-row__rank--top" : ""}`}>
+                {index + 1}
+              </span>
+
+              {/* Content */}
+              <div className="priority-row__content">
+                <span className="priority-row__title">
+                  {truncate(task.title, 60)}
                 </span>
+                {task.content && (
+                  <span className="priority-row__body">
+                    {truncate(task.content, 80)}
+                  </span>
+                )}
               </div>
-              <div className="priority-card">
-                <TaskGrid
-                  id={task.id}
-                  title={task.title}
-                  content={task.content}
-                  created_at={task.created_at}
-                  due_date={task.due_date}
-                  is_completed={task.is_completed}
-                  isDragging={draggedId === task.id}
-                  dragOverId={dragOverId}
-                  onSelect={setSelectedTask}
-                  onDragStart={handleDragStart}
-                  onDragOver={handleDragOver}
-                  onDrop={handleDrop}
-                  onDragEnd={handleDragEnd}
-                  isDraggable={true}
-                  showCheckmark={true}
-                  suppressActionsUntil={suppressActionsUntil}
-                  onComplete={handleTaskComplete}
-                  onDelete={handleTaskDelete}
-                />
+
+              {/* Due date */}
+              {dueDate && (
+                <span
+                  className={`priority-row__due${isOverdue ? " priority-row__due--overdue" : ""}`}
+                >
+                  {isOverdue ? "⚠ " : ""}Due {dueDate}
+                </span>
+              )}
+
+              {/* Actions */}
+              <div
+                className="priority-row__actions"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  className="priority-row__btn priority-row__btn--complete"
+                  onClick={(e) => handleComplete(e, task.id)}
+                  title="Mark as complete"
+                >
+                  ✓
+                </button>
+                <button
+                  className="priority-row__btn priority-row__btn--delete"
+                  onClick={(e) => handleDelete(e, task.id)}
+                  title="Delete task"
+                >
+                  ✕
+                </button>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            </li>
+          );
+        })}
+      </ol>
 
       <Modal
         isOpen={selectedTask !== null}

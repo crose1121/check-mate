@@ -1,10 +1,18 @@
 #root {
-  min-height: 100vh;
+  height: 100%;
+  overflow: hidden;
 }
 
 .app-content-with-sidenav {
   margin-left: 220px;
   padding: 80px 12px 12px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.app-content-with-sidenav::-webkit-scrollbar {
+  display: none;
 }
 
 .page-heading {
