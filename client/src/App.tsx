@@ -12,7 +12,6 @@ import SideNav from "./components/SideNav";
 import FormModal from "./components/FormModal";
 import LandingPage from "./pages/LandingPage";
 import AllTasks from "./pages/AllTasks";
-import PriorityListPage from "./pages/PriorityListPage";
 import Achievements from "./pages/Achievements";
 import CalendarPage from "./pages/CalendarPage";
 import "./App.css";
@@ -65,7 +64,6 @@ export default function App() {
           <Route path="/" element={<AllTasks />} />
           <Route path="/tasks" element={<AllTasks />} />
           <Route path="/all" element={<AllTasks />} />
-          <Route path="/priority" element={<PriorityListPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/new" element={<AllTasks />} />

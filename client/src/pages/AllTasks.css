@@ -20,32 +20,7 @@
   justify-content: flex-end;
 }
 
-.all-tasks-sort,
-.all-tasks-toggle {
-  border: 1px solid #3b3b3b;
-  background: #111;
-  color: #d6d6d6;
-  padding: 0.65rem 1rem;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.all-tasks-sort:hover,
-.all-tasks-toggle:hover {
-  border-color: #667eea;
-  color: #fff;
-}
-
-.all-tasks-sort.active,
-.all-tasks-toggle.active {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border-color: transparent;
-  color: #0c0c0c;
-}
+/* ── Grid view ───────────────────────────────────────── */
 
 .tasks-grid-layout {
   display: grid;
@@ -53,28 +28,15 @@
   gap: 1.5rem;
   max-height: calc(5 * 200px + 4 * 1.5rem);
   overflow-y: auto;
+  scrollbar-width: none;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 8px;
   border: 1px solid #333;
 }
 
-.tasks-grid-layout.list-view {
-  grid-template-columns: 1fr;
-  justify-items: center;
-}
-
-.tasks-grid-layout.list-view > div {
-  width: 100%;
-  max-width: 360px;
-}
-
 .tasks-grid-layout::-webkit-scrollbar {
   display: none;
-}
-
-.tasks-grid-layout {
-  scrollbar-width: none;
 }
 
 .all-tasks-container p {
@@ -84,7 +46,6 @@
   margin-top: 3rem;
 }
 
-/* Responsive adjustments */
 @media (max-width: 1024px) {
   .tasks-grid-layout {
     grid-template-columns: repeat(2, 1fr);
@@ -96,6 +57,8 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Pagination ──────────────────────────────────────── */
 
 .pagination-controls {
   display: flex;
@@ -126,6 +89,10 @@
   color: #fff;
 }
 
+.pagination-button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
 .pagination-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -135,4 +102,224 @@
   color: #b0b0b0;
   font-size: 0.9rem;
   font-weight: 500;
+}
+
+/* ── Priority list view ──────────────────────────────── */
+
+.priority-list-hint {
+  margin: -1rem 0 0.75rem;
+  color: #555;
+  font-size: 0.82rem;
+  letter-spacing: 0.3px;
+  text-align: left !important;
+}
+
+.priority-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.priority-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  background: #181818;
+  border: 1px solid #252525;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.priority-row:hover {
+  border-color: #3a3a3a;
+  background: #1e1e1e;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+.priority-row--top {
+  border-color: rgba(102, 126, 234, 0.35);
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.priority-row--top:hover {
+  border-color: rgba(102, 126, 234, 0.55);
+  background: rgba(102, 126, 234, 0.09);
+  box-shadow: 0 2px 14px rgba(102, 126, 234, 0.15);
+}
+
+.priority-row--dragging {
+  opacity: 0.35;
+  transform: scale(0.98);
+  cursor: grabbing;
+  box-shadow: none;
+}
+
+.priority-row--over {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  transform: scale(1.01);
+}
+
+/* Drag handle */
+.priority-row__handle {
+  font-size: 1.1rem;
+  color: #333;
+  cursor: grab;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: color 0.15s ease;
+  padding: 0 2px;
+}
+
+.priority-row:hover .priority-row__handle {
+  color: #555;
+}
+
+/* Rank badge */
+.priority-row__rank {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: #252525;
+  border: 1px solid #333;
+  color: #888;
+}
+
+.priority-row__rank--top {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: transparent;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  font-size: 0.85rem;
+  box-shadow: 0 0 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Content */
+.priority-row__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.priority-row__title {
+  color: #e0e0e0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.priority-row__body {
+  color: #666;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Due date badge */
+.priority-row__due {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid #2e2e2e;
+  color: #888;
+  white-space: nowrap;
+  letter-spacing: 0.2px;
+}
+
+.priority-row__due--overdue {
+  background: rgba(244, 67, 54, 0.1);
+  border-color: rgba(244, 67, 54, 0.3);
+  color: #f87171;
+}
+
+/* Action buttons */
+.priority-row__actions {
+  display: flex;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.priority-row__btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: transparent;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.priority-row__btn--complete {
+  border: 1.5px solid #333;
+  color: #555;
+}
+
+.priority-row__btn--complete:hover {
+  background: #4caf50;
+  border-color: #4caf50;
+  color: white;
+  transform: scale(1.15);
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+
+.priority-row__btn--complete:active {
+  transform: scale(0.9);
+  box-shadow: none;
+  transition-duration: 0.06s;
+}
+
+.priority-row__btn--delete {
+  border: 1.5px solid #2e2e2e;
+  color: #444;
+}
+
+.priority-row__btn--delete:hover {
+  background: #f44336;
+  border-color: #f44336;
+  color: white;
+  transform: scale(1.15);
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.45);
+}
+
+.priority-row__btn--delete:active {
+  transform: scale(0.9);
+  box-shadow: none;
+  transition-duration: 0.06s;
 }

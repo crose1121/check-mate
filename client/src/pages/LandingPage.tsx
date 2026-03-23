@@ -12,9 +12,7 @@ export default function LandingPage() {
     <section className="landing-page">
       <div className="landing-page__content">
         <AppTitle height="156px" width="156px" />
-        <p className="landing-page__subtitle">
-          A simple workplace productivity tool
-        </p>
+        <p className="landing-page__subtitle">Productivity and Planning</p>
 
         <div className="landing-page__actions">
           <button

@@ -3,8 +3,8 @@ import { useClickOutside } from "../hooks/useClickOutside";
 import "./ViewMenu.css";
 
 interface ViewMenuProps {
-  viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
+  viewMode: "grid" | "priority";
+  onViewModeChange: (mode: "grid" | "priority") => void;
   tasksPerPage: number;
   onTasksPerPageChange: (count: number) => void;
 }
@@ -78,10 +78,10 @@ export default function ViewMenu({
                 value="grid"
                 checked={viewMode === "grid"}
                 onChange={(e) =>
-                  onViewModeChange(e.target.value as "grid" | "list")
+                  onViewModeChange(e.target.value as "grid" | "priority")
                 }
               />
-              <span>Grid View</span>
+              <span>Grid</span>
             </label>
           </div>
 
@@ -90,47 +90,49 @@ export default function ViewMenu({
               <input
                 type="radio"
                 name="viewMode"
-                value="list"
-                checked={viewMode === "list"}
+                value="priority"
+                checked={viewMode === "priority"}
                 onChange={(e) =>
-                  onViewModeChange(e.target.value as "grid" | "list")
+                  onViewModeChange(e.target.value as "grid" | "priority")
                 }
               />
-              <span>List View</span>
+              <span>Priority List</span>
             </label>
           </div>
 
-          <div className="view-field view-divider">
-            <label htmlFor="tasks-per-page" className="view-label">
-              Tasks per page
-            </label>
-            <div className="tasks-per-page-input-group">
-              <button
-                className="clear-button"
-                onClick={handleClear}
-                type="button"
-              >
-                Clear
-              </button>
-              <input
-                id="tasks-per-page"
-                type="text"
-                className="view-text-input"
-                value={inputValue}
-                onChange={handleTasksPerPageChange}
-                placeholder="15"
-                maxLength={3}
-              />
-              <button
-                className="apply-button"
-                onClick={handleApply}
-                disabled={!isValidInput()}
-                type="button"
-              >
-                Apply
-              </button>
+          {viewMode === "grid" && (
+            <div className="view-field view-divider">
+              <label htmlFor="tasks-per-page" className="view-label">
+                Tasks per page
+              </label>
+              <div className="tasks-per-page-input-group">
+                <button
+                  className="clear-button"
+                  onClick={handleClear}
+                  type="button"
+                >
+                  Clear
+                </button>
+                <input
+                  id="tasks-per-page"
+                  type="text"
+                  className="view-text-input"
+                  value={inputValue}
+                  onChange={handleTasksPerPageChange}
+                  placeholder="15"
+                  maxLength={3}
+                />
+                <button
+                  className="apply-button"
+                  onClick={handleApply}
+                  disabled={!isValidInput()}
+                  type="button"
+                >
+                  Apply
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </div>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import "./SideNav.css";
@@ -6,10 +5,6 @@ import "./SideNav.css";
 export default function SideNav() {
   const location = useLocation();
   const { user } = useAuth();
-  const isPlanningRoute = ["/priority", "/calendar"].includes(
-    location.pathname,
-  );
-  const [isPlanningOpen, setIsPlanningOpen] = useState(isPlanningRoute);
 
   if (!user) return null;
 
@@ -37,38 +32,13 @@ export default function SideNav() {
         </li>
 
         <li>
-          <button
-            type="button"
-            className={`side-nav-link side-nav-toggle ${isPlanningRoute ? "active" : ""}`}
-            onClick={() => setIsPlanningOpen((prev) => !prev)}
+          <Link
+            to="/calendar"
+            className={`side-nav-link ${location.pathname === "/calendar" ? "active" : ""}`}
           >
             <span className="icon">📅</span>
-            <span>Planning</span>
-            <span className="side-nav-chevron" aria-hidden="true">
-              {isPlanningOpen ? "▾" : "▸"}
-            </span>
-          </button>
-
-          {isPlanningOpen && (
-            <ul className="side-nav-sublist">
-              <li>
-                <Link
-                  to="/priority"
-                  className={`side-nav-link side-nav-sublink ${location.pathname === "/priority" ? "active" : ""}`}
-                >
-                  <span>Priority List</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/calendar"
-                  className={`side-nav-link side-nav-sublink ${location.pathname === "/calendar" ? "active" : ""}`}
-                >
-                  <span>Calendar</span>
-                </Link>
-              </li>
-            </ul>
-          )}
+            <span>Calendar</span>
+          </Link>
         </li>
 
         <li>
