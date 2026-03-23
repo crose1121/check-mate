@@ -97,13 +97,11 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: "invalid user id" });
   }
 
-  // Validate due date is not in the past
+  // Validate due date is not in the past.
+  // Compare YYYY-MM-DD strings directly — avoids UTC vs local midnight mismatch.
   if (due_date) {
-    const dueDate = new Date(due_date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    if (dueDate < today) {
+    const todayStr = new Date().toISOString().split("T")[0];
+    if (due_date < todayStr) {
       return res.status(400).json({ error: "due date cannot be in the past" });
     }
   }
