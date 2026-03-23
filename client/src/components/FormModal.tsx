@@ -119,8 +119,8 @@ export default function FormModal({ isOpen, onClose, mode }: FormModalProps) {
         setDueDate("");
         onClose();
 
-        // Navigate to tasks page
-        navigate("/tasks");
+        // Navigate to tasks page and signal a refresh
+        navigate("/tasks", { state: { refresh: Date.now() } });
       }
     } catch {
       setError("Network error. Please try again.");
@@ -261,7 +261,7 @@ export default function FormModal({ isOpen, onClose, mode }: FormModalProps) {
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
+                  min={(() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })()}
                 />
               </div>
             </>

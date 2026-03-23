@@ -90,6 +90,8 @@ export default function AllTasks() {
     });
   };
 
+  const locationState = location.state as { refresh?: number } | undefined;
+
   useEffect(() => {
     const fetchTasks = async () => {
       setLoading(true);
@@ -111,7 +113,7 @@ export default function AllTasks() {
       }
     };
     fetchTasks();
-  }, [location.pathname, user?.id]);
+  }, [location.pathname, user?.id, locationState?.refresh]);
 
   useEffect(() => {
     setCurrentPage(1);
