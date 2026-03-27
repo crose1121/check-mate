@@ -98,9 +98,10 @@ router.post("/", async (req, res) => {
   }
 
   // Validate due date is not in the past.
-  // Compare YYYY-MM-DD strings directly — avoids UTC vs local midnight mismatch.
+  // Compare YYYY-MM-DD strings directly using local time to match the client.
   if (due_date) {
-    const todayStr = new Date().toISOString().split("T")[0];
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
     if (due_date < todayStr) {
       return res.status(400).json({ error: "due date cannot be in the past" });
     }
